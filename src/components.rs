@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{events::*, cluster::Cluster};
+use crate::{cluster::Cluster, events::*};
 
 #[derive(Component)]
 pub struct RestartButton {}
@@ -11,7 +11,7 @@ pub struct MainCamera;
 
 #[derive(Component)]
 pub struct Draggable {
-    pub cluster: Cluster
+    pub cluster: Cluster,
 }
 
 #[derive(Component)]

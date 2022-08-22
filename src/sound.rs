@@ -1,8 +1,7 @@
-
 use bevy_oddio::{
     builtins::sine::{self, Sine},
     output::{AudioHandle, AudioSink},
-    Audio, AudioPlugin,
+    Audio,
 };
 use oddio::Sample;
 
@@ -25,8 +24,6 @@ pub fn play_sine(
     noise: Res<SineHandle>,
 ) {
     // Note is in A4.
-    let handles = audio.play(
-        noise.clone(), 
-    sine::Settings::new(0.0, frequency_hz));
+    let handles = audio.play(noise.clone(), sine::Settings::new(0.0, frequency_hz));
     commands.insert_resource(SineSink(handles.0, handles.1));
 }

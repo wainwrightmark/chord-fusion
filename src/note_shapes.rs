@@ -57,7 +57,7 @@ pub fn create_shape(
         .insert(transform)
         .insert(Name::new(name));
 
-    entity_builder.insert(crate::Draggable {        
-        cluster: crate::cluster::Cluster::Single(note)
+    entity_builder.insert(crate::Draggable {
+        cluster: crate::cluster::Cluster::Single(note),
     });
 }

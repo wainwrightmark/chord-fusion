@@ -1,5 +1,5 @@
 use bevy::input::mouse::*;
-use bevy::input::touch::*;
+
 use bevy::prelude::*;
 use bevy::render::camera::RenderTarget;
 
@@ -8,8 +8,7 @@ use crate::*;
 pub struct InputPlugin;
 impl Plugin for InputPlugin {
     fn build(&self, app: &mut App) {
-        app
-            .add_system(mousebutton_listener.label("mousebutton_listener"));
+        app.add_system(mousebutton_listener.label("mousebutton_listener"));
     }
 }
 
@@ -92,4 +91,3 @@ pub fn get_cursor_position(
         None
     }
 }
-

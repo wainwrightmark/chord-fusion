@@ -1,12 +1,6 @@
 #[allow(dead_code)]
-
 use bevy::DefaultPlugins;
-use bevy_oddio::{
-    builtins::sine::{self, Sine},
-    output::{AudioHandle, AudioSink},
-    Audio, AudioPlugin,
-};
-use oddio::Sample;
+use bevy_oddio::AudioPlugin;
 
 use bevy::log::*;
 use bevy::prelude::*;
@@ -26,7 +20,6 @@ use components::*;
 mod walls;
 use walls::*;
 mod cluster;
-use cluster::*;
 
 mod sound;
 use sound::*;

@@ -4,15 +4,13 @@ pub struct EventsPlugin;
 
 impl Plugin for EventsPlugin {
     fn build(&self, app: &mut App) {
-        app
-            .add_event::<DragStartEvent>()
+        app.add_event::<DragStartEvent>()
             .add_event::<DragMoveEvent>()
             .add_event::<DragEndEvent>()
             .add_event::<DragEndedEvent>()
             .add_event::<NewGameEvent>();
     }
 }
-
 
 #[derive(Debug)]
 pub struct DragStartEvent {

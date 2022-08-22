@@ -1,6 +1,6 @@
+use crate::*;
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
-use crate::*;
 
 pub struct DragPlugin;
 impl Plugin for DragPlugin {
@@ -38,10 +38,10 @@ fn drag_end(
             .filter(|f| f.2.drag_source == event.drag_source)
             .for_each(|(entity, _, _, _)| {
                 commands
-                        .entity(entity)
-                        .remove::<Dragged>()
-                        .remove::<RigidBody>()
-                        .insert(RigidBody::Dynamic);
+                    .entity(entity)
+                    .remove::<Dragged>()
+                    .remove::<RigidBody>()
+                    .insert(RigidBody::Dynamic);
 
                 ew_end_drag.send(DragEndedEvent {});
             });
@@ -89,7 +89,7 @@ fn drag_start(
 ) {
     for event in er_drag_start.iter() {
         rapier_context.intersections_with_point(event.position, default(), |entity| {
-            if let Ok((draggable,  rb)) = draggables.get(entity) {
+            if let Ok((_draggable, rb)) = draggables.get(entity) {
                 //println!("Entity {:?} set to dragged", entity);
 
                 let origin = rb.translation;
@@ -103,10 +103,7 @@ fn drag_start(
                         drag_source: event.drag_source,
                     })
                     .remove::<RigidBody>()
-                    
                     .insert(RigidBody::KinematicPositionBased);
-
-                
 
                 return false;
             }
