@@ -1,11 +1,5 @@
 use crate::*;
 
-use bevy_oddio::{
-    builtins::sine::{self, Sine},
-    output::{AudioHandle, AudioSink},
-    Audio,
-};
-use oddio::Sample;
 
 pub struct DragPlugin;
 impl Plugin for DragPlugin {
@@ -36,14 +30,12 @@ fn drag_end(
     mut dragged: Query<(Entity, &Draggable, &Dragged, &mut Transform)>,
     mut commands: Commands,
     mut ew_end_drag: EventWriter<DragEndedEvent>,
-    mut audio_handles: ResMut<Assets<AudioHandle<Sine>>>,
-    mut audio_sinks: ResMut<Assets<AudioSink<Sine>>>,
 ) {
     for event in er_drag_end.iter() {
         dragged
             .iter_mut()
             .filter(|f| f.2.drag_source == event.drag_source)
-            .for_each(|(entity, _, dragged, _)| {
+            .for_each(|(entity, _, _, _)| {
                 commands
                     .entity(entity)
                     .remove::<Dragged>()
@@ -51,11 +43,6 @@ fn drag_end(
                     .insert(RigidBody::Dynamic);
 
                 ew_end_drag.send(DragEndedEvent {});
-                stop_sine(
-                    dragged.handles.clone(),
-                    &mut audio_handles,
-                    &mut audio_sinks,
-                );
             });
     }
 }
@@ -93,21 +80,12 @@ fn drag_start(
     mut er_drag_start: EventReader<DragStartEvent>,
     rapier_context: Res<RapierContext>,
     draggables: Query<(&Draggable, &Transform)>,
-    mut audio: ResMut<Audio<Sample, Sine>>,
-    noise: Res<SineHandle>,
 ) {
     for event in er_drag_start.iter() {
         rapier_context.intersections_with_point(event.position, default(), |entity| {
-            if let Ok((draggable, rb)) = draggables.get(entity) {
+            if let Ok((_, rb)) = draggables.get(entity) {
                 let origin = rb.translation;
                 let offset = origin - event.position.extend(0.0);
-
-                let handles = play_sine(
-                    draggable.cluster.clone(),
-                    &mut commands,
-                    &mut audio,
-                    noise.clone(),
-                );
 
                 commands
                     .entity(entity)
@@ -115,7 +93,6 @@ fn drag_start(
                         origin,
                         offset,
                         drag_source: event.drag_source,
-                        handles,
                     })
                     .remove::<RigidBody>()
                     .insert(RigidBody::KinematicPositionBased);
