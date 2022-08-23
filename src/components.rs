@@ -26,7 +26,7 @@ pub struct Dragged {
     pub origin: Vec3,
     pub offset: Vec3,
     pub drag_source: DragSource,
-    pub handles: (Handle<AudioHandle<Sine>>, Handle<AudioSink<Sine>>),
+    pub handles: Vec<(Handle<AudioHandle<Sine>>, Handle<AudioSink<Sine>>)> ,
 }
 
 #[derive(Component)]

@@ -1,12 +1,17 @@
 use std::fmt::Debug;
 
 use bevy::prelude::Color;
-use smallvec::SmallVec;
+use smallvec::*;
 
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
-pub enum Cluster {
-    Single(Note),
-    Many(SmallVec<[Note; 4]>),
+pub struct Cluster {
+    pub notes: SmallVec<[Note; 4]>
+}
+
+impl From<Note> for Cluster{
+    fn from(val: Note) -> Self {
+        Cluster { notes: smallvec![val] }
+    }
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
