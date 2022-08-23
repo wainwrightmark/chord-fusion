@@ -33,7 +33,7 @@ pub fn detect_hover(
     mut audio_handles: ResMut<Assets<AudioHandle<Sine>>>,
     mut audio_sinks: ResMut<Assets<AudioSink<Sine>>>,
 ) {
-    if let Some(ev) = cursor_evr.iter().last() {
+    if let Some(_ev) = cursor_evr.iter().last() {
         let mut c_sounds: HashMap<Entity, &PlayingSound> = current_sounds.into_iter().collect();
 
         if let Some(position) = get_cursor_position(windows, q_camera) {

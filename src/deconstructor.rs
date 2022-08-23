@@ -1,15 +1,8 @@
-use std::{f32::consts::TAU, ops::Range};
-
 use bevy::prelude::*;
 use bevy_prototype_lyon::{prelude::GeometryBuilder, shapes};
 use bevy_rapier2d::prelude::*;
-use rand::Rng;
 
-use crate::{
-    cluster::{Cluster, Note},
-    orb::SHAPE_SIZE,
-    WINDOW_HEIGHT,
-};
+use crate::orb::SHAPE_SIZE;
 
 pub fn init_deconstructor(mut commands: Commands) {
     create_deconstructor(&mut commands, SHAPE_SIZE, Vec2 { x: 0., y: 200. }, 0.0);
