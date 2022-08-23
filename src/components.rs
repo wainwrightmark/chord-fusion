@@ -15,24 +15,26 @@ pub struct RestartButton {}
 pub struct MainCamera;
 
 #[derive(Component)]
-pub struct Orb{
+pub struct Orb {
     pub cluster: Cluster,
-    
 }
+
 #[derive(Component)]
-pub struct PlayingSound{
+pub struct Deconstructor {}
+
+#[derive(Component)]
+pub struct PlayingSound {
     pub handles: Vec<(Handle<AudioHandle<Sine>>, Handle<AudioSink<Sine>>)>,
 }
 
 #[derive(Component)]
-pub struct Draggable {    
-}
+pub struct Draggable {}
 
 #[derive(Component)]
 pub struct Dragged {
     pub origin: Vec3,
     pub offset: Vec3,
-    pub drag_source: DragSource,    
+    pub drag_source: DragSource,
 }
 
 #[derive(Component)]

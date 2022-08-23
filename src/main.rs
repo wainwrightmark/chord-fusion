@@ -27,11 +27,17 @@ use sound::*;
 mod input;
 use input::*;
 
-mod note_shapes;
-use note_shapes::*;
+mod orb;
+use orb::*;
 
 mod hover;
 use hover::*;
+
+mod combine;
+use combine::*;
+
+mod deconstructor;
+use deconstructor::*;
 
 fn main() {
     App::new()
@@ -59,9 +65,11 @@ fn main() {
         .add_startup_system(setup.label("main_setup"))
         .add_plugin(AudioPlugin)
         .add_startup_system(init_assets)
+        .add_startup_system(init_deconstructor)
         .add_plugin(DragPlugin)
         .add_plugin(HoverPlugin)
-        .add_startup_system_to_stage(StartupStage::PostStartup, create_initial_shapes)
+        .add_plugin(CombinePlugin)
+        .add_startup_system_to_stage(StartupStage::PostStartup, create_initial_orbs)
         .run();
 }
 
@@ -73,4 +81,3 @@ fn setup(mut commands: Commands, mut rapier_config: ResMut<RapierConfiguration>)
         .insert_bundle(Camera2dBundle::default())
         .insert(MainCamera);
 }
-

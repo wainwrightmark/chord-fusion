@@ -6,22 +6,55 @@ use smallvec::*;
 
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
 pub struct Cluster {
-    pub notes: SmallVec<[Note; 4]>
+    pub notes: SmallVec<[Note; 4]>,
 }
 
-impl From<Note> for Cluster{
+impl From<Note> for Cluster {
     fn from(val: Note) -> Self {
-        Cluster { notes: smallvec![val] }
+        Cluster {
+            notes: smallvec![val],
+        }
     }
 }
 
-impl Cluster{
+impl Cluster {
     pub fn get_name(&self) -> String {
-        self.notes.iter().map(|x|x.get_name()).join(" ")
+        self.notes.iter().map(|x| x.get_name()).join(" ")
+    }
+
+    ///Combine two clusters
+    pub fn combine(&self, other: &Self) -> Vec<Cluster> {
+        let all_notes = self.notes.iter().chain(other.notes.iter()).counts();
+
+        let mut all_clusters = Vec::<Cluster>::new();
+
+        let mut main_cluster = Vec::<Note>::new();
+
+        for (&&note, &count) in all_notes.iter() {
+            if count == 1 {
+                main_cluster.push(note);
+            } else {
+                for _ in 0..count {
+                    all_clusters.push(note.into());
+                }
+            }
+        }
+
+        if main_cluster.len() >= 12 {
+            for n in main_cluster {
+                all_clusters.push(n.into());
+            }
+        } else {
+            all_clusters.push(Cluster {
+                notes: main_cluster.to_smallvec(),
+            })
+        }
+
+        all_clusters
     }
 }
 
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Note(pub u8);
 
 const fn create_note(i: usize) -> Note {

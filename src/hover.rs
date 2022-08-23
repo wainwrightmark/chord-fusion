@@ -5,7 +5,7 @@ use bevy::prelude::*;
 use crate::*;
 
 use bevy_oddio::{
-    builtins::sine::{Sine},
+    builtins::sine::Sine,
     output::{AudioHandle, AudioSink},
     Audio,
 };
@@ -14,13 +14,9 @@ use oddio::Sample;
 pub struct HoverPlugin;
 impl Plugin for HoverPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(
-            detect_hover
-                .label("detect_hover")
-        );
+        app.add_system(detect_hover.label("detect_hover"));
     }
 }
-
 
 pub fn detect_hover(
     mut commands: Commands,

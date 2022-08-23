@@ -1,26 +1,16 @@
 use crate::*;
 
-
 pub struct DragPlugin;
 impl Plugin for DragPlugin {
     fn build(&self, app: &mut App) {
         app.add_system(
-            drag_start
-                .label("drag_start")
-                .after("mousebutton_listener")
-                .after("touch_listener"),
+            drag_start.label("drag_start").after("mousebutton_listener"), //.after("touch_listener"),
         )
         .add_system(
-            drag_move
-                .label("drag_move")
-                .after("mousebutton_listener")
-                .after("touch_listener"),
+            drag_move.label("drag_move").after("mousebutton_listener"), //.after("touch_listener"),
         )
         .add_system(
-            drag_end
-                .label("drag_end")
-                .after("mousebutton_listener")
-                .after("touch_listener"),
+            drag_end.label("drag_end").after("mousebutton_listener"), //.after("touch_listener"),
         );
     }
 }
@@ -30,12 +20,23 @@ fn drag_end(
     mut dragged: Query<(Entity, &Draggable, &Dragged, &mut Transform)>,
     mut commands: Commands,
     mut ew_end_drag: EventWriter<DragEndedEvent>,
+    mut ew_combine: EventWriter<CombineEvent>,
+    rapier_context: Res<RapierContext>,
 ) {
     for event in er_drag_end.iter() {
         dragged
             .iter_mut()
             .filter(|f| f.2.drag_source == event.drag_source)
             .for_each(|(entity, _, _, _)| {
+                for contact in rapier_context
+                    .contacts_with(entity)
+                    //.filter(|p|p.has_any_active_contacts())
+                    .take(1)
+                {
+                    info!("Sent Combine Event");
+                    ew_combine.send(CombineEvent(contact.collider1(), contact.collider2()));
+                }
+
                 commands
                     .entity(entity)
                     .remove::<Dragged>()

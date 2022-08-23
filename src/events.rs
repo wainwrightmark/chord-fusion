@@ -8,7 +8,8 @@ impl Plugin for EventsPlugin {
             .add_event::<DragMoveEvent>()
             .add_event::<DragEndEvent>()
             .add_event::<DragEndedEvent>()
-            .add_event::<NewGameEvent>();
+            .add_event::<NewGameEvent>()
+            .add_event::<CombineEvent>();
     }
 }
 
@@ -31,6 +32,9 @@ pub struct DragEndEvent {
 
 #[derive(Debug)]
 pub struct DragEndedEvent {}
+
+#[derive(Debug)]
+pub struct CombineEvent(pub Entity, pub Entity);
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
 pub enum DragSource {

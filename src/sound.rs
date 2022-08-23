@@ -30,7 +30,10 @@ pub fn play_sine(
         .notes
         .iter()
         .map(|note| {
-            let handles = audio.play(noise.clone(), sine::Settings::new(0.0, note.get_frequency()));
+            let handles = audio.play(
+                noise.clone(),
+                sine::Settings::new(0.0, note.get_frequency()),
+            );
             let cloned_handles = (handles.0.clone_weak(), handles.1.clone_weak());
             commands.insert_resource(SineSink(handles.0, handles.1));
             cloned_handles
