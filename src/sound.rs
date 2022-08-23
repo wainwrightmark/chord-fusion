@@ -1,3 +1,5 @@
+use std::{mem::ManuallyDrop, ptr};
+
 use bevy_oddio::{
     builtins::sine::{self, Sine},
     output::{AudioHandle, AudioSink},
@@ -6,6 +8,8 @@ use bevy_oddio::{
 use oddio::Sample;
 
 use bevy::prelude::*;
+
+use crate::cluster::*;
 
 #[derive(Deref)]
 pub struct SineHandle(Handle<Sine>);
@@ -18,12 +22,31 @@ pub fn init_assets(mut commands: Commands, mut assets: ResMut<Assets<Sine>>) {
 }
 
 pub fn play_sine(
-    frequency_hz: f32,
-    mut commands: Commands,
-    mut audio: ResMut<Audio<Sample, Sine>>,
-    noise: Res<SineHandle>,
+    cluster: Cluster,
+    commands: &mut Commands,
+    audio: &mut ResMut<Audio<Sample, Sine>>,
+    noise: Handle<Sine>,
+) -> (Handle<AudioHandle<Sine>>, Handle<AudioSink<Sine>>) {
+    match cluster {
+        Cluster::Single(note) => {
+            let handles = audio.play(noise, sine::Settings::new(0.0, note.get_frequency()));
+            let cloned_handles = (handles.0.clone_weak(), handles.1.clone_weak());
+            commands.insert_resource(SineSink(handles.0, handles.1));
+
+            cloned_handles
+        }
+        Cluster::Many(_) => todo!(),
+    }
+}
+
+pub fn stop_sine(
+    handles: (Handle<AudioHandle<Sine>>, Handle<AudioSink<Sine>>),
+    audio_handles: &mut ResMut<Assets<AudioHandle<Sine>>>,
+    audio_sinks: &mut ResMut<Assets<AudioSink<Sine>>>,
 ) {
-    // Note is in A4.
-    let handles = audio.play(noise.clone(), sine::Settings::new(0.0, frequency_hz));
-    commands.insert_resource(SineSink(handles.0, handles.1));
+    audio_handles.remove(handles.0);
+
+    if let Some(mut audio_sink) = audio_sinks.remove(handles.1) {
+        audio_sink.control::<oddio::Stop<_>, _>().stop();
+    }
 }

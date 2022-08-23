@@ -20,7 +20,7 @@ impl Note {
     pub const ALL_NOTES: [Note; 12] = array_const_fn_init::array_const_fn_init![create_note; 12];
 
     pub fn get_frequency(self) -> f32 {
-        const FREQUENCY_C: f32 = 130.81;
+        const FREQUENCY_C: f32 = 261.62;
         match self.0 % 12 {
             0 => FREQUENCY_C * 1.0,
             1 => FREQUENCY_C * 16. / 15.,

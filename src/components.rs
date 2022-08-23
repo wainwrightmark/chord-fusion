@@ -2,6 +2,13 @@ use bevy::prelude::*;
 
 use crate::{cluster::Cluster, events::*};
 
+use bevy_oddio::{
+    builtins::sine::{self, Sine},
+    output::{AudioHandle, AudioSink},
+    Audio,
+};
+use oddio::Sample;
+
 #[derive(Component)]
 pub struct RestartButton {}
 
@@ -19,6 +26,7 @@ pub struct Dragged {
     pub origin: Vec3,
     pub offset: Vec3,
     pub drag_source: DragSource,
+    pub handles: (Handle<AudioHandle<Sine>>, Handle<AudioSink<Sine>>),
 }
 
 #[derive(Component)]
