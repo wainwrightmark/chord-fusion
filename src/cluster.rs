@@ -1,6 +1,7 @@
 use std::fmt::Debug;
 
 use bevy::prelude::Color;
+use itertools::Itertools;
 use smallvec::*;
 
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
@@ -14,8 +15,14 @@ impl From<Note> for Cluster{
     }
 }
 
+impl Cluster{
+    pub fn get_name(&self) -> String {
+        self.notes.iter().map(|x|x.get_name()).join(" ")
+    }
+}
+
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-pub struct Note(u8);
+pub struct Note(pub u8);
 
 const fn create_note(i: usize) -> Note {
     Note(i as u8)
