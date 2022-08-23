@@ -81,9 +81,9 @@ pub fn create_orb(
             Transform::default(),
         ))
         .insert(rbb)
-        .insert(collider_shape.clone())
+        .insert(collider_shape)
         .insert(transform)
-        .insert(Name::new(name.clone()));
+        .insert(Name::new(name));
 
     let child_radius = (shape_size * 0.5 * 0.9) / (cluster.notes.len() as f32);
     let child_distance = if cluster.notes.len() <= 1 {
@@ -115,7 +115,7 @@ pub fn create_orb(
         }
     });
 
-    entity_builder.insert(crate::Orb { cluster: cluster });
+    entity_builder.insert(crate::Orb { cluster });
 
     entity_builder.insert(crate::Draggable {});
 }
