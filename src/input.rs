@@ -24,8 +24,10 @@ fn mousebutton_listener(
 ) {
     if mouse_button_input.just_released(MouseButton::Left) {
         debug!("Sent mouse drag end event");
+        let position = get_cursor_position(windows, q_camera);
         ew_drag_end.send(DragEndEvent {
             drag_source: DragSource::Mouse,
+            position
         })
     } else if mouse_button_input.just_pressed(MouseButton::Left) {
         if let Some(position) = get_cursor_position(windows, q_camera) {

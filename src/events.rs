@@ -7,7 +7,6 @@ impl Plugin for EventsPlugin {
         app.add_event::<DragStartEvent>()
             .add_event::<DragMoveEvent>()
             .add_event::<DragEndEvent>()
-            .add_event::<DragEndedEvent>()
             .add_event::<NewGameEvent>()
             .add_event::<CombineEvent>();
     }
@@ -28,16 +27,21 @@ pub struct DragMoveEvent {
 #[derive(Debug)]
 pub struct DragEndEvent {
     pub drag_source: DragSource,
+    pub position: Option<Vec2>
 }
 
-#[derive(Debug)]
-pub struct DragEndedEvent {}
+// #[derive(Debug)]
+// pub struct DragEndedEvent {}
 
 #[derive(Debug)]
 pub struct CombineEvent(pub Entity, pub Entity);
 
 #[derive(Debug)]
-pub struct DeconstructEvent(pub Entity);
+pub struct DragEndWithIntersection
+{
+    pub dragged: Entity,
+    pub target: Entity
+}
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
 pub enum DragSource {

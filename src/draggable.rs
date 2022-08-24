@@ -19,9 +19,8 @@ fn drag_end(
     mut er_drag_end: EventReader<DragEndEvent>,
     mut dragged: Query<(Entity, &Draggable, &Dragged, &mut Transform)>,
     mut commands: Commands,
-    mut ew_end_drag: EventWriter<DragEndedEvent>,
     mut ew_combine: EventWriter<CombineEvent>,
-    mut ew_deconstruct: EventWriter<DeconstructEvent>,
+    mut ew_deconstruct: EventWriter<DragEndWithIntersection>,
     rapier_context: Res<RapierContext>,
 ) {
     for event in er_drag_end.iter() {
@@ -37,8 +36,14 @@ fn drag_end(
                     }
                 }
 
-                for intersection in rapier_context.intersections_with(entity).take(1) {
-                    ew_deconstruct.send(DeconstructEvent(intersection.1)); //TODO also track victory conditions this way
+                if let Some(point) = event.position {
+                    rapier_context.intersections_with_point(
+                        point,
+                        QueryFilter::exclude_collider(QueryFilter::default(), entity),
+                        |e| {
+                            ew_deconstruct.send( DragEndWithIntersection { dragged: entity, target:  e });
+                            false
+                        });
                 }
 
                 commands
@@ -46,8 +51,6 @@ fn drag_end(
                     .remove::<Dragged>()
                     .remove::<RigidBody>()
                     .insert(RigidBody::Dynamic);
-
-                ew_end_drag.send(DragEndedEvent {});
             });
     }
 }

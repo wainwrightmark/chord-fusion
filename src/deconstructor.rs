@@ -9,19 +9,19 @@ pub struct DeconstructPlugin;
 impl Plugin for DeconstructPlugin {
     fn build(&self, app: &mut App) {
         app.add_startup_system(init_deconstructor)
-            .add_event::<DeconstructEvent>()
+            .add_event::<DragEndWithIntersection>()
             .add_system(deconstruct.label("deconstruct"));
     }
 }
 
 fn deconstruct(
     mut commands: Commands,
-    mut er_deconstruct: EventReader<DeconstructEvent>,
+    mut er_deconstruct: EventReader<DragEndWithIntersection>,
     orbs: Query<(Entity, &Transform, &Orb, &Children)>,
     note_circles: Query<(Entity, &NoteCircle, &GlobalTransform)>,
 ) {
     for ev in er_deconstruct.iter() {
-        if let Ok((e, t, o, children)) = orbs.get(ev.0) {
+        if let Ok((e, t, o, children)) = orbs.get(ev.dragged) {
             if o.cluster.notes.len() > 1 {
                 let rangex = (t.translation.x - SHAPE_SIZE).max(-WINDOW_WIDTH / 2.)
                     ..(t.translation.x + SHAPE_SIZE).min(WINDOW_WIDTH / 2.);
