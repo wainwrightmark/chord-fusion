@@ -2,10 +2,6 @@ use bevy::prelude::*;
 
 use crate::{cluster::Cluster, events::*};
 
-use bevy_oddio::{
-    builtins::sine::Sine,
-    output::{AudioHandle, AudioSink},
-};
 
 #[derive(Component)]
 pub struct RestartButton {}
@@ -23,8 +19,7 @@ pub struct Orb {
 pub struct Deconstructor {}
 
 #[derive(Component)]
-pub struct PlayingSound {
-    pub handles: Vec<(Handle<AudioHandle<Sine>>, Handle<AudioSink<Sine>>)>,
+pub struct PlayingSound {    
 }
 
 #[derive(Component)]

@@ -1,0 +1,13 @@
+- [ ] Change Index.html and ci to allow authomatic publish and testing in browser
+- [ ] Visual indication of combinations
+- [ ] Get rid of clipping sound
+- [ ] Nicer sound
+- [ ] Display Note Names
+- [ ] Chord Names
+- [ ] Victory conditions
+- [ ] Levels
+- [ ] Text format for defining levels
+- [ ] Barriers
+- [ ] Other puzzle elements
+- [ ] Combining / Deconstructing animations
+- [ ] Help file explaining what to do

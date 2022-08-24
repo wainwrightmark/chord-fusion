@@ -48,7 +48,7 @@ fn main() {
         .insert_resource(WindowDescriptor {
             #[cfg(target_arch = "wasm32")]
             canvas: Some("#game".to_string()),
-            title: "Equilibrium".to_string(),
+            title: "Chord Fusion".to_string(),
             width: WINDOW_WIDTH,
             height: WINDOW_HEIGHT,
             ..Default::default()
@@ -64,7 +64,7 @@ fn main() {
         ))
         .add_startup_system(setup.label("main_setup"))
         .add_plugin(AudioPlugin)
-        .add_startup_system(init_assets)
+        .add_plugin(SoundPlugin)
         .add_startup_system(init_deconstructor)
         .add_plugin(DragPlugin)
         .add_plugin(HoverPlugin)

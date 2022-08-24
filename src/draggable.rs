@@ -32,8 +32,7 @@ fn drag_end(
                     .contacts_with(entity)
                     //.filter(|p|p.has_any_active_contacts())
                     .take(1)
-                {
-                    info!("Sent Combine Event");
+                {                    
                     ew_combine.send(CombineEvent(contact.collider1(), contact.collider2()));
                 }
 

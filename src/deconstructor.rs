@@ -36,6 +36,7 @@ pub fn create_deconstructor(commands: &mut Commands, shape_size: f32, position: 
         ))
         .insert(rbb)
         .insert(collider_shape)
+        //.insert(Sensor{})
         .insert(transform)
         .insert(Name::new("Deconstructor"));
 

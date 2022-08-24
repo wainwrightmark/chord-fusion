@@ -2,11 +2,6 @@ use bevy::prelude::*;
 
 use crate::*;
 
-use bevy_oddio::{
-    builtins::sine::Sine,
-    output::{AudioHandle, AudioSink},
-};
-
 pub struct CombinePlugin;
 impl Plugin for CombinePlugin {
     fn build(&self, app: &mut App) {
@@ -17,10 +12,8 @@ impl Plugin for CombinePlugin {
 
 pub fn deconstruct(
     commands: &mut Commands,
-    orb: (Entity, &Transform, &Orb, Option<&PlayingSound>),
+    orb: (Entity, &Transform, &Orb),
     deconstructor: (Entity, &Transform, &Deconstructor),
-    audio_handles: &mut ResMut<Assets<AudioHandle<Sine>>>,
-    audio_sinks: &mut ResMut<Assets<AudioSink<Sine>>>,
 ) {
     let midx = (orb.1.translation.x + deconstructor.1.translation.x) / 2.;
     let midy = (orb.1.translation.y + deconstructor.1.translation.y) / 2.;
@@ -29,10 +22,6 @@ pub fn deconstruct(
         (midx - SHAPE_SIZE).max(-WINDOW_WIDTH / 2.)..(midx + SHAPE_SIZE).min(WINDOW_WIDTH / 2.);
     let rangey =
         (midy - SHAPE_SIZE).max(-WINDOW_HEIGHT / 2.)..(midy + SHAPE_SIZE).min(WINDOW_HEIGHT / 2.);
-
-    if let Some(playing1) = orb.3 {
-        stop_sine(playing1.handles.clone(), audio_handles, audio_sinks);
-    }
 
     commands.entity(orb.0).despawn_recursive();
 
@@ -53,35 +42,19 @@ pub fn combine_orbs(
     orbs: Query<(
         Entity,
         &Transform,
-        Option<(&Orb, Option<&PlayingSound>)>,
+        Option<&Orb>,
         Option<&Deconstructor>,
     )>,
-
-    mut audio_handles: ResMut<Assets<AudioHandle<Sine>>>,
-    mut audio_sinks: ResMut<Assets<AudioSink<Sine>>>,
 ) {
-    for ev in er_combine.iter() {
-        info!("Combine Event Received");
+    for ev in er_combine.iter() {        
         if let Ok((e0, t0, orb0, deconstructor0)) = orbs.get(ev.0) {
             if let Ok((e1, t1, orb1, deconstructor1)) = orbs.get(ev.1) {
                 if orb0.is_some() && orb1.is_some() {
-                    let (o0, p0) = orb0.unwrap();
-                    let (o1, p1) = orb1.unwrap();
-                    if let Some(playing0) = p0 {
-                        stop_sine(
-                            playing0.handles.clone(),
-                            &mut audio_handles,
-                            &mut audio_sinks,
-                        );
-                    }
+                    let o0 = orb0.unwrap();
+                    let o1 = orb1.unwrap();
+                   
 
-                    if let Some(playing1) = p1 {
-                        stop_sine(
-                            playing1.handles.clone(),
-                            &mut audio_handles,
-                            &mut audio_sinks,
-                        );
-                    }
+                    
 
                     commands.entity(e0).despawn_recursive();
                     commands.entity(e1).despawn_recursive();
@@ -108,18 +81,14 @@ pub fn combine_orbs(
                 } else if deconstructor0.is_some() && orb1.is_some() {
                     deconstruct(
                         &mut commands,
-                        (e1, t1, orb1.unwrap().0, orb1.unwrap().1),
+                        (e1, t1, orb1.unwrap()),
                         (e0, t0, deconstructor0.unwrap()),
-                        &mut audio_handles,
-                        &mut audio_sinks,
                     )
                 } else if deconstructor1.is_some() && orb0.is_some() {
                     deconstruct(
                         &mut commands,
-                        (e0, t0, orb0.unwrap().0, orb0.unwrap().1),
+                        (e0, t0, orb0.unwrap()),
                         (e1, t1, deconstructor1.unwrap()),
-                        &mut audio_handles,
-                        &mut audio_sinks,
                     )
                 }
             }
