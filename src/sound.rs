@@ -19,7 +19,10 @@ impl Plugin for SoundPlugin {
         app.add_startup_system(init_assets)
             .init_resource::<CurrentSound>()
             .add_system_to_stage(CoreStage::PostUpdate, stop_sounds.label("stop_sounds"))
-            .add_system_to_stage(CoreStage::PostUpdate, start_sounds.label("start_sounds").after("stop_sounds"));
+            .add_system_to_stage(
+                CoreStage::PostUpdate,
+                start_sounds.label("start_sounds").after("stop_sounds"),
+            );
     }
 }
 
@@ -53,15 +56,20 @@ fn stop_sounds(
 }
 
 fn start_sounds(
-     mut commands: Commands,
-     query: Query<&Orb, Added<PlayingSound>>,
-     mut current_sound: ResMut<CurrentSound>,
-     mut audio: ResMut<Audio<Sample, Sine>>,
-     noise: Res<SineHandle>,
+    mut commands: Commands,
+    query: Query<&Orb, Added<PlayingSound>>,
+    mut current_sound: ResMut<CurrentSound>,
+    mut audio: ResMut<Audio<Sample, Sine>>,
+    noise: Res<SineHandle>,
 ) {
     for orb in query.iter() {
         if current_sound.handles.is_none() {
-            let handles = play_sine(orb.cluster.clone(), &mut commands, &mut audio, noise.clone());
+            let handles = play_sine(
+                orb.cluster.clone(),
+                &mut commands,
+                &mut audio,
+                noise.clone(),
+            );
             current_sound.handles = Some(handles);
         }
     }

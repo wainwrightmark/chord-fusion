@@ -29,14 +29,15 @@ fn drag_end(
             .iter_mut()
             .filter(|f| f.2.drag_source == event.drag_source)
             .for_each(|(entity, _, _, _)| {
-                for contact in rapier_context
-                    .contacts_with(entity)
-                    .take(1)
-                {                    
-                    ew_combine.send(CombineEvent(contact.collider1(), contact.collider2()));
+                for contact in rapier_context.contacts_with(entity).take(1) {
+                    if contact.collider1() == entity {
+                        ew_combine.send(CombineEvent(contact.collider1(), contact.collider2()));
+                    } else {
+                        ew_combine.send(CombineEvent(contact.collider2(), contact.collider1()));
+                    }
                 }
 
-                for intersection in rapier_context.intersections_with(entity).take(1){                    
+                for intersection in rapier_context.intersections_with(entity).take(1) {
                     ew_deconstruct.send(DeconstructEvent(intersection.1)); //TODO also track victory conditions this way
                 }
 

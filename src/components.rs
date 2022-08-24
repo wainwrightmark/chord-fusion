@@ -1,7 +1,9 @@
 use bevy::prelude::*;
 
-use crate::{cluster::Cluster, events::*};
-
+use crate::{
+    cluster::{Cluster, Note},
+    events::*,
+};
 
 #[derive(Component)]
 pub struct RestartButton {}
@@ -16,11 +18,15 @@ pub struct Orb {
 }
 
 #[derive(Component)]
+pub struct NoteCircle {
+    pub note: Note,
+}
+
+#[derive(Component)]
 pub struct Deconstructor {}
 
 #[derive(Component)]
-pub struct PlayingSound {    
-}
+pub struct PlayingSound {}
 
 #[derive(Component)]
 pub struct Draggable {}

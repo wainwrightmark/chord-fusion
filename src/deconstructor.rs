@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 use bevy_prototype_lyon::{prelude::GeometryBuilder, shapes};
 use bevy_rapier2d::prelude::*;
+use itertools::Itertools;
 
 use crate::*;
 
@@ -16,17 +17,21 @@ impl Plugin for DeconstructPlugin {
 fn deconstruct(
     mut commands: Commands,
     mut er_deconstruct: EventReader<DeconstructEvent>,
-    orbs: Query<(Entity, &Transform, &Orb)>,
+    orbs: Query<(Entity, &Transform, &Orb, &Children)>,
+    note_circles: Query<(Entity, &NoteCircle, &GlobalTransform)>,
 ) {
     for ev in er_deconstruct.iter() {
-        if let Ok((e, t, o)) = orbs.get(ev.0) {
+        if let Ok((e, t, o, children)) = orbs.get(ev.0) {
             if o.cluster.notes.len() > 1 {
                 let rangex = (t.translation.x - SHAPE_SIZE).max(-WINDOW_WIDTH / 2.)
                     ..(t.translation.x + SHAPE_SIZE).min(WINDOW_WIDTH / 2.);
                 let rangey = (t.translation.y - SHAPE_SIZE).max(-WINDOW_HEIGHT / 2.)
                     ..(t.translation.y + SHAPE_SIZE).min(WINDOW_HEIGHT / 2.);
 
-                commands.entity(e).despawn_recursive();
+                let mut note_circles = children
+                    .iter()
+                    .filter_map(|&e| note_circles.get(e).ok())
+                    .collect_vec();
 
                 for &note in o.cluster.notes.iter() {
                     create_orb_near(
@@ -35,8 +40,11 @@ fn deconstruct(
                         note.into(),
                         rangex.clone(),
                         rangey.clone(),
+                        &mut note_circles,
                     )
                 }
+
+                commands.entity(e).despawn();
             }
         }
     }

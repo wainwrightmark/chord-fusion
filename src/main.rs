@@ -12,6 +12,7 @@ pub const WINDOW_HEIGHT: f32 = 640f32;
 pub const WALL_WIDTH: f32 = 360f32;
 
 mod draggable;
+use bevy_tweening::TweeningPlugin;
 use draggable::*;
 mod events;
 use events::*;
@@ -55,20 +56,21 @@ fn main() {
         })
         .insert_resource(ClearColor(Color::rgb(0.9, 0.9, 0.95)))
         .add_plugins(DefaultPlugins)
+        .add_plugin(TweeningPlugin)
+        .add_plugin(AudioPlugin)
+        .add_plugin(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(
+            WINDOW_HEIGHT / 10.0,
+        ))
         .add_plugin(WallsPlugin)
         .add_plugin(ShapePlugin)
         .add_plugin(InputPlugin)
         .add_plugin(EventsPlugin)
-        .add_plugin(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(
-            WINDOW_HEIGHT / 10.0,
-        ))
-        .add_startup_system(setup.label("main_setup"))
-        .add_plugin(AudioPlugin)
         .add_plugin(SoundPlugin)
         .add_plugin(DragPlugin)
         .add_plugin(HoverPlugin)
         .add_plugin(CombinePlugin)
         .add_plugin(DeconstructPlugin)
+        .add_startup_system(setup.label("main_setup"))
         .add_startup_system_to_stage(StartupStage::PostStartup, create_initial_orbs)
         .run();
 }

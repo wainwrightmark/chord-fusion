@@ -9,5 +9,5 @@
 - [ ] Text format for defining levels
 - [ ] Barriers
 - [ ] Other puzzle elements
-- [ ] Combining / Deconstructing animations
+- [x] Combining / Deconstructing animations
 - [ ] Help file explaining what to do
