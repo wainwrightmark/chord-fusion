@@ -21,6 +21,7 @@ fn drag_end(
     mut commands: Commands,
     mut ew_end_drag: EventWriter<DragEndedEvent>,
     mut ew_combine: EventWriter<CombineEvent>,
+    mut ew_deconstruct: EventWriter<DeconstructEvent>,
     rapier_context: Res<RapierContext>,
 ) {
     for event in er_drag_end.iter() {
@@ -30,10 +31,13 @@ fn drag_end(
             .for_each(|(entity, _, _, _)| {
                 for contact in rapier_context
                     .contacts_with(entity)
-                    //.filter(|p|p.has_any_active_contacts())
                     .take(1)
                 {                    
                     ew_combine.send(CombineEvent(contact.collider1(), contact.collider2()));
+                }
+
+                for intersection in rapier_context.intersections_with(entity).take(1){                    
+                    ew_deconstruct.send(DeconstructEvent(intersection.1)); //TODO also track victory conditions this way
                 }
 
                 commands

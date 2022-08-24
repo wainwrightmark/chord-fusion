@@ -36,6 +36,9 @@ pub struct DragEndedEvent {}
 #[derive(Debug)]
 pub struct CombineEvent(pub Entity, pub Entity);
 
+#[derive(Debug)]
+pub struct DeconstructEvent(pub Entity);
+
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
 pub enum DragSource {
     Mouse,

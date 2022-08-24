@@ -2,13 +2,51 @@ use bevy::prelude::*;
 use bevy_prototype_lyon::{prelude::GeometryBuilder, shapes};
 use bevy_rapier2d::prelude::*;
 
-use crate::orb::SHAPE_SIZE;
+use crate::*;
 
-pub fn init_deconstructor(mut commands: Commands) {
+pub struct DeconstructPlugin;
+impl Plugin for DeconstructPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_startup_system(init_deconstructor)
+            .add_event::<DeconstructEvent>()
+            .add_system(deconstruct.label("deconstruct"));
+    }
+}
+
+fn deconstruct(
+    mut commands: Commands,
+    mut er_deconstruct: EventReader<DeconstructEvent>,
+    orbs: Query<(Entity, &Transform, &Orb)>,
+) {
+    for ev in er_deconstruct.iter() {
+        if let Ok((e, t, o)) = orbs.get(ev.0) {
+            if o.cluster.notes.len() > 1 {
+                let rangex = (t.translation.x - SHAPE_SIZE).max(-WINDOW_WIDTH / 2.)
+                    ..(t.translation.x + SHAPE_SIZE).min(WINDOW_WIDTH / 2.);
+                let rangey = (t.translation.y - SHAPE_SIZE).max(-WINDOW_HEIGHT / 2.)
+                    ..(t.translation.y + SHAPE_SIZE).min(WINDOW_HEIGHT / 2.);
+
+                commands.entity(e).despawn_recursive();
+
+                for &note in o.cluster.notes.iter() {
+                    create_orb_near(
+                        &mut commands,
+                        SHAPE_SIZE,
+                        note.into(),
+                        rangex.clone(),
+                        rangey.clone(),
+                    )
+                }
+            }
+        }
+    }
+}
+
+fn init_deconstructor(mut commands: Commands) {
     create_deconstructor(&mut commands, SHAPE_SIZE, Vec2 { x: 0., y: 200. }, 0.0);
 }
 
-pub fn create_deconstructor(commands: &mut Commands, shape_size: f32, position: Vec2, angle: f32) {
+fn create_deconstructor(commands: &mut Commands, shape_size: f32, position: Vec2, angle: f32) {
     let collider_shape = Collider::cuboid(shape_size / 2., shape_size / 2.);
     let transform: Transform = Transform {
         translation: position.extend(1.0),
@@ -36,7 +74,7 @@ pub fn create_deconstructor(commands: &mut Commands, shape_size: f32, position: 
         ))
         .insert(rbb)
         .insert(collider_shape)
-        //.insert(Sensor{})
+        .insert(Sensor {})
         .insert(transform)
         .insert(Name::new("Deconstructor"));
 

@@ -65,10 +65,10 @@ fn main() {
         .add_startup_system(setup.label("main_setup"))
         .add_plugin(AudioPlugin)
         .add_plugin(SoundPlugin)
-        .add_startup_system(init_deconstructor)
         .add_plugin(DragPlugin)
         .add_plugin(HoverPlugin)
         .add_plugin(CombinePlugin)
+        .add_plugin(DeconstructPlugin)
         .add_startup_system_to_stage(StartupStage::PostStartup, create_initial_orbs)
         .run();
 }
