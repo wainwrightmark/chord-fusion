@@ -49,7 +49,7 @@ fn stop_sounds(
 ) {
     for _entity in removals.iter() {
         if let Some(handles_vec) = &current_sound.handles {
-            stop_sine(&handles_vec, &mut audio_handles, &mut audio_sinks);
+            stop_sine(handles_vec, &mut audio_handles, &mut audio_sinks);
             current_sound.handles = None;
         }
     }

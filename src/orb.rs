@@ -178,7 +178,7 @@ pub fn create_orb(
                     ),
                     Transform::from_translation(child_translation).with_scale(child_scale_vec),
                 ))
-                .insert(NoteCircle { note: note.clone() });
+                .insert(NoteCircle { note: *note });
             });
         }
     }
