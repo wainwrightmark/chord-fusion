@@ -30,11 +30,8 @@ pub struct DragEndEvent {
     pub position: Option<Vec2>
 }
 
-// #[derive(Debug)]
-// pub struct DragEndedEvent {}
-
 #[derive(Debug)]
-pub struct CombineEvent(pub Entity, pub Entity);
+pub struct CombineEvent(pub Vec<Entity>);
 
 #[derive(Debug)]
 pub struct DragEndWithIntersection

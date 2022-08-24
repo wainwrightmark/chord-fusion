@@ -23,14 +23,15 @@ impl Cluster {
     }
 
     ///Combine two clusters
-    pub fn combine(&self, other: &Self) -> Vec<Cluster> {
-        let all_notes = self.notes.iter().chain(other.notes.iter()).counts();
+    pub fn combine(clusters: &Vec<Self>) -> Vec<Cluster> {
+        
+        let all_notes = clusters.iter().flat_map(|x| x.notes.clone()).counts();
 
         let mut all_clusters = Vec::<Cluster>::new();
 
         let mut main_cluster = Vec::<Note>::new();
 
-        for (&&note, &count) in all_notes.iter() {
+        for (&note, &count) in all_notes.iter() {
             if count == 1 {
                 main_cluster.push(note);
             } else {

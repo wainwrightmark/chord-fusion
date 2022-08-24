@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 use itertools::Itertools;
 
+use crate::cluster::*;
 use crate::*;
 
 pub struct CombinePlugin;
@@ -18,51 +19,73 @@ fn combine_orbs(
     note_circles: Query<(Entity, &NoteCircle, &GlobalTransform)>,
 ) {
     for ev in er_combine.iter() {
-        if let Ok((e0, t0, o0, children0)) = orbs.get(ev.0) {
-            if let Ok((e1, t1, o1, children1)) = orbs.get(ev.1) {
-                let mut note_circles = children0
-                    .iter()
-                    .chain(children1.iter())
-                    .filter_map(|&e| note_circles.get(e).ok())
-                    .collect_vec();
+        let groups = ev.0.iter().filter_map(|&e| orbs.get(e).ok()).collect_vec();
 
-                let new_clusters = o0.cluster.combine(&o1.cluster);
+        if groups.len() > 1 {
+            let mut note_circles = groups
+                .iter()
+                .flat_map(|x| x.3)
+                .filter_map(|&e| note_circles.get(e).ok())
+                .collect_vec();
 
-                let mut first = true;
+            let new_clusters =
+                Cluster::combine(&groups.iter().map(|x| x.2.cluster.clone()).collect_vec());
 
-                for cluster in new_clusters {
-                    if first {
-                        create_orb(
-                            &mut commands,
-                            SHAPE_SIZE,
-                            t0.translation.truncate(),
-                            t0.rotation.angle_between(Default::default()),
-                            cluster,
-                            &mut note_circles,
-                        );
+            let first_entity = groups[0];
 
-                        first = false;
-                    } else {
-                        let midx = (t0.translation.x + t1.translation.x) / 2.;
-                        let midy = (t0.translation.y + t1.translation.y) / 2.;
+            let mut first = true;
 
-                        let rangex = (midx - SHAPE_SIZE).max(-WINDOW_WIDTH / 2.)
-                            ..(midx + SHAPE_SIZE).min(WINDOW_WIDTH / 2.);
-                        let rangey = (midy - SHAPE_SIZE).max(-WINDOW_HEIGHT / 2.)
-                            ..(midy + SHAPE_SIZE).min(WINDOW_HEIGHT / 2.);
-                        create_orb_near(
-                            &mut commands,
-                            SHAPE_SIZE,
-                            cluster,
-                            rangex.clone(),
-                            rangey.clone(),
-                            &mut note_circles,
-                        )
-                    }
+            for cluster in new_clusters {
+                if first {
+                    create_orb(
+                        &mut commands,
+                        SHAPE_SIZE,
+                        first_entity.1.translation.truncate(),
+                        first_entity.1.rotation.angle_between(Default::default()),
+                        cluster,
+                        &mut note_circles,
+                    );
+
+                    first = false;
+                } else {
+                    let minx = groups
+                        .iter()
+                        .map(|x| x.1.translation.x)
+                        .reduce(f32::min)
+                        .unwrap();
+                    let miny = groups
+                        .iter()
+                        .map(|x| x.1.translation.y)
+                        .reduce(f32::min)
+                        .unwrap();
+                    let maxx = groups
+                        .iter()
+                        .map(|x| x.1.translation.x)
+                        .reduce(f32::max)
+                        .unwrap();
+                    let maxy = groups
+                        .iter()
+                        .map(|x| x.1.translation.y)
+                        .reduce(f32::max)
+                        .unwrap();
+
+                    let rangex = (minx - SHAPE_SIZE).max(-WINDOW_WIDTH / 2.)
+                        ..(maxx + SHAPE_SIZE).min(WINDOW_WIDTH / 2.);
+                    let rangey = (miny - SHAPE_SIZE).max(-WINDOW_HEIGHT / 2.)
+                        ..(maxy + SHAPE_SIZE).min(WINDOW_HEIGHT / 2.);
+                    create_orb_near(
+                        &mut commands,
+                        SHAPE_SIZE,
+                        cluster,
+                        rangex.clone(),
+                        rangey.clone(),
+                        &mut note_circles,
+                    )
                 }
+            }
 
-                commands.entity(e0).despawn();
-                commands.entity(e1).despawn();
+            for (e, _, _, _) in groups {
+                commands.entity(e).despawn();
             }
         }
     }

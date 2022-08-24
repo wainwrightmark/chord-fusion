@@ -1,4 +1,5 @@
 use crate::*;
+use itertools::*;
 
 pub struct DragPlugin;
 impl Plugin for DragPlugin {
@@ -28,12 +29,18 @@ fn drag_end(
             .iter_mut()
             .filter(|f| f.2.drag_source == event.drag_source)
             .for_each(|(entity, _, _, _)| {
-                for contact in rapier_context.contacts_with(entity).take(1) {
-                    if contact.collider1() == entity {
-                        ew_combine.send(CombineEvent(contact.collider1(), contact.collider2()));
-                    } else {
-                        ew_combine.send(CombineEvent(contact.collider2(), contact.collider1()));
-                    }
+                let all_contacts = std::iter::once(entity)
+                    .chain(
+                        rapier_context
+                            .contacts_with(entity)
+                            .flat_map(|x| [x.collider1(), x.collider2()]),
+                    )
+                    .sorted()
+                    .dedup()
+                    .collect_vec();
+
+                if all_contacts.len() > 1 {
+                    ew_combine.send(CombineEvent(all_contacts));
                 }
 
                 if let Some(point) = event.position {
@@ -41,9 +48,13 @@ fn drag_end(
                         point,
                         QueryFilter::exclude_collider(QueryFilter::default(), entity),
                         |e| {
-                            ew_deconstruct.send( DragEndWithIntersection { dragged: entity, target:  e });
+                            ew_deconstruct.send(DragEndWithIntersection {
+                                dragged: entity,
+                                target: e,
+                            });
                             false
-                        });
+                        },
+                    );
                 }
 
                 commands
