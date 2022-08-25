@@ -137,10 +137,11 @@ pub struct NoteHandles {
 fn set_sounds(
     playing_orbs: Query<(Entity, &Orb, &PlayingSound)>,
     removals: RemovedComponents<PlayingSound>,
-    additions: Query<Added<PlayingSound>>,
+    additions: Query<&PlayingSound, Added<PlayingSound>>,
     note_handles: Res<NoteHandles>,
     audio_sinks: ResMut<Assets<AudioSink>>,
 ) {
+
     if removals.iter().next().is_some() || additions.iter().next().is_some() {
         if let Some(handles) = &note_handles.handles {
             //something has changed. Reset all volumes

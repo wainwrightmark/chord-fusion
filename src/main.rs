@@ -39,6 +39,12 @@ use combine::*;
 mod deconstructor;
 use deconstructor::*;
 
+
+mod chord;
+
+mod chord_text;
+use chord_text::*;
+
 fn main() {
     // When building for WASM, print panics to the browser console
     #[cfg(target_arch = "wasm32")]
@@ -65,6 +71,7 @@ fn main() {
             WINDOW_HEIGHT / 10.0,
         ))
         .add_plugin(WallsPlugin)
+        .add_plugin(ChordTextPlugin)
         .add_plugin(ShapePlugin)
         .add_plugin(InputPlugin)
         .add_plugin(EventsPlugin)

@@ -85,7 +85,7 @@ pub fn create_orb(
     let rbb = RigidBody::Dynamic;
 
     let mut entity_builder = commands.spawn();
-    let name = cluster.get_name();
+    //let name = cluster.get_name();
 
     let num_children = cluster.notes.len();
 
@@ -108,8 +108,8 @@ pub fn create_orb(
 
     entity_builder
         .insert(rbb)
-        .insert(collider_shape)
-        .insert(Name::new(name));
+        .insert(collider_shape);
+        //.insert(Name::new(name));
 
     let child_scale = 1. / (num_children as f32);
     let child_distance = if num_children <= 1 {

@@ -1,8 +1,10 @@
 use std::fmt::Debug;
 
-use bevy::prelude::Color;
+use bevy::prelude::{Color, info};
 use itertools::Itertools;
 use smallvec::*;
+
+use crate::chord::*;
 
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
 pub struct Cluster {
@@ -18,11 +20,56 @@ impl From<Note> for Cluster {
 }
 
 impl Cluster {
-    pub fn get_name(&self) -> String {
-        self.notes.iter().map(|x| x.get_name()).join(" ")
+    pub fn get_chord_name(&self) -> Option<String> {
+        if self.notes.len() == 3 {
+            let sorted_notes = self.notes.iter().map(|&x| x.0).sorted();
+            let arr: [u8; 3] = sorted_notes.collect_vec().try_into().unwrap();
+
+            for i in 0..3 {
+                let a1 = Self::permute(arr, i);
+                let chord_option = Chord3::all().get(&a1);
+
+                if let Some(chord) = chord_option {
+                    return Some(format!("{}{}", self.notes[i].get_name(), chord.nice_name()));
+                }
+            }
+        } else if self.notes.len() == 4 {
+            let sorted_notes = self.notes.iter().map(|&x| x.0).sorted();
+            let arr: [u8; 4] = sorted_notes.collect_vec().try_into().unwrap();
+
+            for i in 0..4 {
+                let a1 = Self::permute(arr, i);
+                let chord_option = Chord4::all().get(&a1);
+
+                if let Some(chord) = chord_option {
+                    return Some(format!("{}{}", self.notes[i].get_name(), chord.nice_name()));
+                }
+            }
+        }
+
+        return None;
     }
 
-    ///Combine two clusters
+    fn permute<const L: usize>(notes: [u8; L], index: usize) -> [u8; L] {
+        let mut new_notes = notes.clone();
+        new_notes.rotate_left(index);
+        for i in 0..L {
+            new_notes[i] = ((new_notes[i] + 12) - notes[index]) % 12;
+        }
+
+        new_notes
+    }
+}
+
+impl Cluster {
+    pub fn get_notes_text(&self) -> String {
+        self.notes
+            .iter()
+            .map(|x| x.get_name())
+            .join(" ")
+    }
+
+    ///Combine many clusters
     pub fn combine(clusters: &Vec<Self>) -> Vec<Cluster> {
         let all_notes = clusters.iter().flat_map(|x| x.notes.clone()).counts();
 
