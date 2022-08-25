@@ -9,7 +9,7 @@ pub struct ChordTextPlugin;
 impl Plugin for ChordTextPlugin {
     fn build(&self, app: &mut App) {
         app.add_startup_system(setup)
-        .add_system_to_stage(CoreStage::PostUpdate, change_chord_text);
+            .add_system_to_stage(CoreStage::PostUpdate, change_chord_text);
     }
 }
 
@@ -37,8 +37,13 @@ fn change_chord_text(
         for (_, mut text) in text_query.iter_mut() {
             let chord_name_option = cluster.get_chord_name();
 
-            text.sections[0].value = chord_name_option.unwrap_or_default();
-            text.sections[1].value = cluster.get_notes_text();
+            if let Some(chord_name) = chord_name_option {
+                text.sections[0].value = chord_name;
+                text.sections[1].value = cluster.get_notes_text();
+            } else {
+                text.sections[0].value = cluster.get_notes_text();
+                text.sections[1].value = "".to_string();
+            }
         }
     }
 }

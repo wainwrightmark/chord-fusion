@@ -141,7 +141,6 @@ fn set_sounds(
     note_handles: Res<NoteHandles>,
     audio_sinks: ResMut<Assets<AudioSink>>,
 ) {
-
     if removals.iter().next().is_some() || additions.iter().next().is_some() {
         if let Some(handles) = &note_handles.handles {
             //something has changed. Reset all volumes

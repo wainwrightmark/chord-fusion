@@ -16,8 +16,6 @@ impl Plugin for DragPlugin {
     }
 }
 
-
-
 fn drag_end(
     mut er_drag_end: EventReader<DragEndEvent>,
     mut dragged: Query<(Entity, &Draggable, &Dragged, &mut Transform)>,
@@ -35,6 +33,7 @@ fn drag_end(
                     .chain(
                         rapier_context
                             .contacts_with(entity)
+                            .filter(|x| x.has_any_active_contacts())
                             .flat_map(|x| [x.collider1(), x.collider2()]),
                     )
                     .sorted()

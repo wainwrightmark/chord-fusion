@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use bevy::prelude::{Color, info};
+use bevy::prelude::Color;
 use itertools::Itertools;
 use smallvec::*;
 
@@ -63,10 +63,7 @@ impl Cluster {
 
 impl Cluster {
     pub fn get_notes_text(&self) -> String {
-        self.notes
-            .iter()
-            .map(|x| x.get_name())
-            .join(" ")
+        self.notes.iter().map(|x| x.get_name()).join(" ")
     }
 
     ///Combine many clusters
@@ -131,18 +128,18 @@ impl Note {
     }
     pub fn get_name(self) -> &'static str {
         match self.0 % 12 {
-            0 => "A",
-            1 => "A#",
-            2 => "B",
-            3 => "C",
-            4 => "C#",
-            5 => "D",
-            6 => "D#",
-            7 => "E",
-            8 => "F",
-            9 => "F#",
-            10 => "G",
-            11 => "G#",
+            0 => "C",
+            1 => "C#",
+            2 => "D",
+            3 => "D#",
+            4 => "E",
+            5 => "F",
+            6 => "F#",
+            7 => "G",
+            8 => "G#",
+            9 => "A",
+            10 => "A#",
+            11 => "B",
             _ => unimplemented!(),
         }
     }

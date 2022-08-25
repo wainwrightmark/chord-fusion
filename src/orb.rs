@@ -106,10 +106,8 @@ pub fn create_orb(
         transform,
     ));
 
-    entity_builder
-        .insert(rbb)
-        .insert(collider_shape);
-        //.insert(Name::new(name));
+    entity_builder.insert(rbb).insert(collider_shape);
+    //.insert(Name::new(name));
 
     let child_scale = 1. / (num_children as f32);
     let child_distance = if num_children <= 1 {

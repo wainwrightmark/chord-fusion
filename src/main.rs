@@ -39,7 +39,6 @@ use combine::*;
 mod deconstructor;
 use deconstructor::*;
 
-
 mod chord;
 
 mod chord_text;

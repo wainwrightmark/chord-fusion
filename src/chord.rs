@@ -52,7 +52,6 @@ impl Chord<3> for Chord3 {
         }
     }
 
-
     fn nice_name(&self) -> &'static str {
         match self {
             Self::Major => "major",
@@ -66,12 +65,12 @@ impl Chord<3> for Chord3 {
 
     fn intervals(&self) -> [u8; 3] {
         match self {
-            Chord3::Major => [0, 4,7],
-            Chord3::Minor => [0,3,7],
-            Chord3::Diminished => [0,3,6],
-            Chord3::Augmented => [0,4,8],
-            Chord3::Suspended2 => [0,2,7],
-            Chord3::Suspended4 => [0,5,7],
+            Chord3::Major => [0, 4, 7],
+            Chord3::Minor => [0, 3, 7],
+            Chord3::Diminished => [0, 3, 6],
+            Chord3::Augmented => [0, 4, 8],
+            Chord3::Suspended2 => [0, 2, 7],
+            Chord3::Suspended4 => [0, 5, 7],
         }
     }
 
@@ -97,7 +96,7 @@ impl Chord<4> for Chord4 {
 
     fn nice_name(&self) -> &'static str {
         match self {
-            Self::Dominant7 => "dom7",
+            Self::Dominant7 => "7",
             Self::Major7 => "major7",
             Self::Minor7 => "minor7",
             Self::MinorMajor7 => "minor major7",
@@ -110,16 +109,16 @@ impl Chord<4> for Chord4 {
     }
 
     fn intervals(&self) -> [u8; 4] {
-        match self{
-            Chord4::Dominant7 => [0,4,7,10],
-            Chord4::Major7 => [0,4,7,11],
-            Chord4::Minor7 => [0,3,7,10],
-            Chord4::MinorMajor7 => [0,3,7,11],
-            Chord4::HalfDiminished => [0,3,6,10],
-            Chord4::Diminished7 => [0,3,6,9],
-            Chord4::Augmented7 => [0,4,8,10],
-            Chord4::AugmentedMaj7 => [0,4,8,11],
-            Chord4::Dominant11 => [0,5,7,10],
+        match self {
+            Chord4::Dominant7 => [0, 4, 7, 10],
+            Chord4::Major7 => [0, 4, 7, 11],
+            Chord4::Minor7 => [0, 3, 7, 10],
+            Chord4::MinorMajor7 => [0, 3, 7, 11],
+            Chord4::HalfDiminished => [0, 3, 6, 10],
+            Chord4::Diminished7 => [0, 3, 6, 9],
+            Chord4::Augmented7 => [0, 4, 8, 10],
+            Chord4::AugmentedMaj7 => [0, 4, 8, 11],
+            Chord4::Dominant11 => [0, 5, 7, 10],
         }
     }
 
