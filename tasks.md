@@ -1,9 +1,9 @@
-- [ ] Change Index.html and ci to allow authomatic publish and testing in browser
-- [ ] Visual indication of combinations
+- [x] Change Index.html and ci to allow authomatic publish and testing in browser
+- [x] Visual indication of combinations
 - [ ] Get rid of clipping sound
 - [ ] Nicer sound
-- [ ] Display Note Names
-- [ ] Chord Names
+- [x] Display Note Names
+- [x] Chord Names
 - [ ] Victory conditions
 - [ ] Levels
 - [ ] Text format for defining levels
@@ -11,3 +11,4 @@
 - [ ] Other puzzle elements
 - [x] Combining / Deconstructing animations
 - [ ] Help file explaining what to do
+- [ ] Chord text should be same color as notes

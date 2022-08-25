@@ -1,6 +1,7 @@
 use std::fmt::Debug;
 
 use bevy::prelude::Color;
+use bevy_prototype_lyon::prelude::{DrawMode, FillMode, StrokeMode};
 use itertools::Itertools;
 use smallvec::*;
 
@@ -20,6 +21,29 @@ impl From<Note> for Cluster {
 }
 
 impl Cluster {
+
+    pub fn get_draw_mode(&self, playing: bool) -> DrawMode{
+        if self.notes.len()== 1{
+
+            if playing {
+                DrawMode::Fill(FillMode::color(self.notes[0].get_dark_color()))
+            }
+            else{
+                DrawMode::Fill(FillMode::color(Color::NONE))
+            }
+
+            
+        }
+        else{
+            if playing {
+                DrawMode::Fill(FillMode::color(Color::DARK_GRAY))
+            }
+            else{
+                DrawMode::Stroke(StrokeMode::color(Color::DARK_GRAY))
+            }
+        }
+    }
+
     pub fn get_chord_name(&self) -> Option<String> {
         if self.notes.len() == 3 {
             let sorted_notes = self.notes.iter().map(|&x| x.0).sorted();
@@ -151,6 +175,16 @@ impl Note {
             saturation: 0.7,
             lightness: 0.8,
             alpha: 1.0,
+        }
+    }
+    
+    pub fn get_dark_color(self) -> Color {
+        let hue = 30.0 * (self.0 as f32);
+        Color::Hsla {
+            hue,
+            saturation: 0.7,
+            lightness: 0.4,
+            alpha: 0.8,
         }
     }
 }

@@ -1,7 +1,7 @@
 use std::{f32::consts::TAU, ops::Range, time::Duration};
 
 use bevy::prelude::*;
-use bevy_prototype_lyon::{prelude::GeometryBuilder, shapes};
+use bevy_prototype_lyon::{prelude::{GeometryBuilder}, shapes};
 use bevy_rapier2d::prelude::*;
 use bevy_tweening::{
     lens::{TransformPositionLens, TransformScaleLens},
@@ -11,7 +11,7 @@ use rand::Rng;
 
 use crate::{
     cluster::{Cluster, Note},
-    components::NoteCircle,
+    components::{NoteCircle},
 };
 
 pub const SHAPE_SIZE: f32 = 60f32;
@@ -67,6 +67,8 @@ pub fn create_orb_near(
     )
 }
 
+
+
 pub fn create_orb(
     commands: &mut Commands,
     shape_size: f32,
@@ -85,31 +87,24 @@ pub fn create_orb(
     let rbb = RigidBody::Dynamic;
 
     let mut entity_builder = commands.spawn();
-    //let name = cluster.get_name();
 
     let num_children = cluster.notes.len();
 
-    let stroke_color = if num_children > 1 {
-        Color::DARK_GRAY
-    } else {
-        Color::rgba(1., 1., 1., 0.)
-    };
+    
 
     entity_builder.insert_bundle(GeometryBuilder::build_as(
         &shapes::Circle {
             center: Vec2::ZERO,
             radius: shape_size / 2.0,
         },
-        bevy_prototype_lyon::prelude::DrawMode::Stroke(
-            bevy_prototype_lyon::draw::StrokeMode::color(stroke_color),
-        ),
+        cluster.get_draw_mode(false),
         transform,
     ));
 
     entity_builder.insert(rbb).insert(collider_shape);
     //.insert(Name::new(name));
 
-    let child_scale = 1. / (num_children as f32);
+    let child_scale = 0.9 / (num_children as f32);
     let child_distance = if num_children <= 1 {
         Vec2::ZERO
     } else {

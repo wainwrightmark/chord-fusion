@@ -1,4 +1,5 @@
 use crate::*;
+use bevy::utils::HashSet;
 use itertools::*;
 
 pub struct DragPlugin;
@@ -17,9 +18,11 @@ impl Plugin for DragPlugin {
 }
 
 fn drag_end(
+    mut commands: Commands,
+
     mut er_drag_end: EventReader<DragEndEvent>,
     mut dragged: Query<(Entity, &Draggable, &Dragged, &mut Transform)>,
-    mut commands: Commands,
+
     mut ew_combine: EventWriter<CombineEvent>,
     mut ew_deconstruct: EventWriter<DragEndWithIntersection>,
     rapier_context: Res<RapierContext>,
@@ -68,13 +71,17 @@ fn drag_end(
 }
 
 fn drag_move(
+    mut commands: Commands,
+
     mut er_drag_move: EventReader<DragMoveEvent>,
-    mut dragged_entities: Query<(&Dragged, &mut Transform)>,
+    mut dragged_entities: Query<(Entity, &Dragged, &mut Transform)>,
+    rapier_context: Res<RapierContext>,
+    undragged_players: Query<(Entity, With<PlayingSound>, Without<Dragged>)>,
 ) {
     for event in er_drag_move.iter() {
-        if let Some((dragged, mut rb)) = dragged_entities
+        if let Some((entity, dragged, mut rb)) = dragged_entities
             .iter_mut()
-            .find(|d| d.0.drag_source == event.drag_source)
+            .find(|d| d.1.drag_source == event.drag_source)
         {
             let max_x: f32 = crate::WINDOW_WIDTH / 2.0; //You can't leave the game area
             let max_y: f32 = crate::WINDOW_HEIGHT / 2.0;
@@ -91,6 +98,30 @@ fn drag_move(
             let new_position = dragged.offset + clamped_position.extend(0.0); // clamped_position;
 
             rb.translation = new_position;
+
+            let mut remaining_undragged_players: HashSet<_> =
+                undragged_players.iter().map(|(e,_,_)| e).collect();
+
+            let all_contacts = rapier_context
+                .contacts_with(entity)
+                .filter(|x| x.has_any_active_contacts())
+                .flat_map(|x| [x.collider1(), x.collider2()])
+                .sorted()
+                .dedup()
+                .collect_vec();
+
+            for c_entity in all_contacts{
+                if c_entity != entity{
+                    if !remaining_undragged_players.remove(&c_entity){
+                        //this entity was not previously playing sound
+                        commands.entity(c_entity).insert(PlayingSound{});
+                    }
+                }
+            }
+            for rem in remaining_undragged_players{
+                //This entity is not in contact but is playing sound, remove the thingy
+                commands.entity(rem).remove::<PlayingSound>();
+            }
         }
     }
 }
