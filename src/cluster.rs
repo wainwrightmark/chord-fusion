@@ -24,7 +24,6 @@ impl Cluster {
 
     ///Combine two clusters
     pub fn combine(clusters: &Vec<Self>) -> Vec<Cluster> {
-        
         let all_notes = clusters.iter().flat_map(|x| x.notes.clone()).counts();
 
         let mut all_clusters = Vec::<Cluster>::new();

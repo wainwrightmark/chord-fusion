@@ -27,17 +27,16 @@ pub struct DragMoveEvent {
 #[derive(Debug)]
 pub struct DragEndEvent {
     pub drag_source: DragSource,
-    pub position: Option<Vec2>
+    pub position: Option<Vec2>,
 }
 
 #[derive(Debug)]
 pub struct CombineEvent(pub Vec<Entity>);
 
 #[derive(Debug)]
-pub struct DragEndWithIntersection
-{
+pub struct DragEndWithIntersection {
     pub dragged: Entity,
-    pub target: Entity
+    pub target: Entity,
 }
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
