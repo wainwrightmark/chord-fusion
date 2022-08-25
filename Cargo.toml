@@ -11,7 +11,6 @@ rand = "0.8.5"
 #bevy_oddio = {git = "https://github.com/harudagondi/bevy_oddio"}
 bevy_fundsp = {git = "https://github.com/harudagondi/bevy_fundsp"}
 bevy_tweening = "0.5.0"
-oddio = "0.6.0"
 itertools = "0.10.3"
 bevy_prototype_lyon = "0.6.0"
 bevy_rapier2d = { version = "0.16", features = [ "enhanced-determinism" ] }

@@ -10,20 +10,18 @@ pub struct SoundPlugin;
 impl Plugin for SoundPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(DspPlugin)
-            .add_startup_system(init_dsp)
-            .init_resource::<CurrentSound>()
-            .add_system_to_stage(CoreStage::PostUpdate, stop_sounds.label("stop_sounds"))
-            .add_system_to_stage(
-                CoreStage::PostUpdate,
-                start_sounds.label("start_sounds").after("stop_sounds"),
-            );
+            .add_startup_system(init_dsp.label("init_dsp"))
+            .add_startup_system_to_stage(
+                StartupStage::PostStartup,
+                start_all_sounds.label("start_all_sounds"),
+            )
+            .init_resource::<NoteHandles>()
+            .add_system_to_stage(CoreStage::PostUpdate, set_sounds.label("stop_sounds"));
     }
 }
 
 fn pad_sound(hz: f32) -> impl AudioUnit32 {
-    (triangle_hz(hz) + square_hz(hz)) >> lowpole_hz(100.0) >> split::<U2>() * 0.2
-    // (triangle_hz(hz) | lfo(move |t| xerp11(50.0, 5000.0, fractal_noise(0, 6, 0.5, t * 0.2))))
-    //         >> bandpass_q(5.0)
+    (triangle_hz(hz) + sine_hz(hz * 2.)) >> lowpole_hz(100.0) >> split::<U2>() * 0.2
 }
 
 fn pad_sound_note(note: Note) -> impl AudioUnit32 {
@@ -68,101 +66,100 @@ fn sound11() -> impl AudioUnit32 {
     pad_sound_note(Note(11))
 }
 
-//const PLAY_NOTE_FUNCTIONS: [dyn FnDspGraph; 12] = [play_note_0];
-
 fn init_dsp(mut dsp_manager: ResMut<DspManager>) {
     // length is in seconds
 
-    //TODO fix horrible hack
-    dsp_manager.add_graph(sound0, 5.0);
-    dsp_manager.add_graph(sound1, 5.0);
-    dsp_manager.add_graph(sound2, 5.0);
-    dsp_manager.add_graph(sound3, 5.0);
-    dsp_manager.add_graph(sound4, 5.0);
-    dsp_manager.add_graph(sound5, 5.0);
-    dsp_manager.add_graph(sound6, 5.0);
-    dsp_manager.add_graph(sound7, 5.0);
-    dsp_manager.add_graph(sound8, 5.0);
-    dsp_manager.add_graph(sound9, 5.0);
-    dsp_manager.add_graph(sound10, 5.0);
-    dsp_manager.add_graph(sound11, 5.0);
+    let len = 5.0; //Note the length has a big impact on the loading time
+                   //TODO fix horrible hack
+    dsp_manager
+        .add_graph(sound0, len)
+        .add_graph(sound1, len)
+        .add_graph(sound2, len)
+        .add_graph(sound3, len)
+        .add_graph(sound4, len)
+        .add_graph(sound5, len)
+        .add_graph(sound6, len)
+        .add_graph(sound7, len)
+        .add_graph(sound8, len)
+        .add_graph(sound9, len)
+        .add_graph(sound10, len)
+        .add_graph(sound11, len);
 }
 
-#[derive(Default)]
-pub struct CurrentSound {
-    pub handles: Option<Vec<Handle<AudioSink>>>,
-}
-
-fn stop_sounds(
-    removals: RemovedComponents<PlayingSound>,
-    mut current_sound: ResMut<CurrentSound>,
-    mut audio_sinks: ResMut<Assets<AudioSink>>,
-) {
-    for _entity in removals.iter() {
-        if let Some(handles_vec) = &current_sound.handles {
-            stop_sound(handles_vec, &mut audio_sinks);
-            current_sound.handles = None;
-        }
-    }
-}
-
-fn start_sounds(
-    query: Query<&Orb, Added<PlayingSound>>,
-    mut current_sound: ResMut<CurrentSound>,
-
+fn start_all_sounds(
     dsp_assets: Res<DspAssets>,
     audio: Res<Audio>,
     audio_sinks: Res<Assets<AudioSink>>,
+    mut note_handles: ResMut<NoteHandles>,
 ) {
-    for orb in query.iter() {
-        if current_sound.handles.is_none() {
-            let handles = play_sound(orb.cluster.clone(), &dsp_assets, &audio, &audio_sinks);
-            current_sound.handles = Some(handles);
-        }
-    }
+    let settings = PlaybackSettings {
+        repeat: true,
+        volume: 0.0,
+        ..Default::default()
+    };
+
+    //Fix horrible hack
+    let handles = [
+        audio_sinks
+            .get_handle(audio.play_with_settings(dsp_assets.graph(&sound0), settings.clone())),
+        audio_sinks
+            .get_handle(audio.play_with_settings(dsp_assets.graph(&sound1), settings.clone())),
+        audio_sinks
+            .get_handle(audio.play_with_settings(dsp_assets.graph(&sound2), settings.clone())),
+        audio_sinks
+            .get_handle(audio.play_with_settings(dsp_assets.graph(&sound3), settings.clone())),
+        audio_sinks
+            .get_handle(audio.play_with_settings(dsp_assets.graph(&sound4), settings.clone())),
+        audio_sinks
+            .get_handle(audio.play_with_settings(dsp_assets.graph(&sound5), settings.clone())),
+        audio_sinks
+            .get_handle(audio.play_with_settings(dsp_assets.graph(&sound6), settings.clone())),
+        audio_sinks
+            .get_handle(audio.play_with_settings(dsp_assets.graph(&sound7), settings.clone())),
+        audio_sinks
+            .get_handle(audio.play_with_settings(dsp_assets.graph(&sound8), settings.clone())),
+        audio_sinks
+            .get_handle(audio.play_with_settings(dsp_assets.graph(&sound9), settings.clone())),
+        audio_sinks
+            .get_handle(audio.play_with_settings(dsp_assets.graph(&sound10), settings.clone())),
+        audio_sinks
+            .get_handle(audio.play_with_settings(dsp_assets.graph(&sound11), settings.clone())),
+    ];
+
+    note_handles.handles = Some(handles);
 }
 
-fn play_sound(
-    cluster: Cluster,
-    dsp_assets: &Res<DspAssets>,
-    audio: &Res<Audio>,
-    audio_sinks: &Res<Assets<AudioSink>>,
-) -> Vec<Handle<AudioSink>> {
-    let handles_vec = cluster
-        .notes
-        .iter()
-        .map(|&note| {
-            //TODO fix horrible hack
-            let audio_source = match note.0 {
-                0 => dsp_assets.graph(&sound0),
-                1 => dsp_assets.graph(&sound1),
-                2 => dsp_assets.graph(&sound2),
-                3 => dsp_assets.graph(&sound3),
-                4 => dsp_assets.graph(&sound4),
-                5 => dsp_assets.graph(&sound5),
-                6 => dsp_assets.graph(&sound6),
-                7 => dsp_assets.graph(&sound7),
-                8 => dsp_assets.graph(&sound8),
-                9 => dsp_assets.graph(&sound9),
-                10 => dsp_assets.graph(&sound10),
-                11 => dsp_assets.graph(&sound11),
-                _ => unimplemented!(),
-            };
-
-            let weak_handle = audio.play(audio_source);
-            let strong_handle = audio_sinks.get_handle(weak_handle);
-
-            strong_handle
-        })
-        .collect_vec();
-
-    handles_vec
+#[derive(Default)]
+pub struct NoteHandles {
+    pub handles: Option<[Handle<AudioSink>; 12]>,
 }
 
-fn stop_sound(handles_vec: &Vec<Handle<AudioSink>>, audio_sinks: &mut ResMut<Assets<AudioSink>>) {
-    for handle in handles_vec {
-        if let Some(audio_sink) = audio_sinks.remove(handle) {
-            audio_sink.stop();
+fn set_sounds(
+    playing_orbs: Query<(Entity, &Orb, &PlayingSound)>,
+    removals: RemovedComponents<PlayingSound>,
+    additions: Query<Added<PlayingSound>>,
+    note_handles: Res<NoteHandles>,
+    audio_sinks: ResMut<Assets<AudioSink>>,
+) {
+    if removals.iter().next().is_some() || additions.iter().next().is_some() {
+        if let Some(handles) = &note_handles.handles {
+            //something has changed. Reset all volumes
+            let counts = playing_orbs
+                .iter()
+                .flat_map(|x| x.1.cluster.notes.clone())
+                .counts();
+
+            let total: usize = counts.values().sum();
+
+            for n in Note::ALL_NOTES {
+                let c = *counts.get(&n).unwrap_or(&0);
+                let vol = (c as f32) / total as f32;
+
+                let handle = &handles[n.0 as usize];
+
+                let sink = audio_sinks.get(handle).unwrap();
+                sink.set_volume(vol);
+            }
         }
     }
 }

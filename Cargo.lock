@@ -982,7 +982,6 @@ dependencies = [
  "console_error_panic_hook",
  "embed-resource",
  "itertools",
- "oddio",
  "rand",
  "smallvec",
  "winit 0.27.2",
@@ -2158,12 +2157,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "mint"
-version = "0.5.9"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e53debba6bda7a793e5f99b8dacf19e626084f525f7829104ba9898f367d85ff"
-
-[[package]]
 name = "mio"
 version = "0.8.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2535,15 +2528,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3370abb7372ed744232c12954d920d1a40f1c4686de9e79e800021ef492294bd"
 dependencies = [
  "cc",
-]
-
-[[package]]
-name = "oddio"
-version = "0.6.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f27f95a36072d6d7532f6d803f7c56d84a31699b3b688c1ad74500da50bf074c"
-dependencies = [
- "mint",
 ]
 
 [[package]]
