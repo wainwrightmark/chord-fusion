@@ -8,7 +8,8 @@ keywords = ["music", "game", "bevy"]
 
 [dependencies]
 rand = "0.8.5"
-bevy_oddio = {git = "https://github.com/harudagondi/bevy_oddio"}
+#bevy_oddio = {git = "https://github.com/harudagondi/bevy_oddio"}
+bevy_fundsp = {git = "https://github.com/harudagondi/bevy_fundsp"}
 bevy_tweening = "0.5.0"
 oddio = "0.6.0"
 itertools = "0.10.3"

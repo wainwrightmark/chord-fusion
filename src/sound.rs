@@ -1,22 +1,16 @@
-use bevy_oddio::{
-    builtins::sine::{self, Sine},
-    output::{AudioHandle, AudioSink},
-    Audio,
-};
-use itertools::Itertools;
-use oddio::Sample;
-
-use bevy::prelude::*;
-
 use crate::{
     cluster::*,
     components::{Orb, PlayingSound},
 };
+use bevy::{audio::AudioSink, prelude::*};
+use bevy_fundsp::prelude::*;
+use itertools::Itertools;
 
 pub struct SoundPlugin;
 impl Plugin for SoundPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(init_assets)
+        app.add_plugin(DspPlugin)
+            .add_startup_system(init_dsp)
             .init_resource::<CurrentSound>()
             .add_system_to_stage(CoreStage::PostUpdate, stop_sounds.label("stop_sounds"))
             .add_system_to_stage(
@@ -26,88 +20,149 @@ impl Plugin for SoundPlugin {
     }
 }
 
-#[derive(Deref)]
-pub struct SineHandle(Handle<Sine>);
+fn pad_sound(hz: f32) -> impl AudioUnit32 {
+    (triangle_hz(hz) + square_hz(hz)) >> lowpole_hz(100.0) >> split::<U2>() * 0.2
+    // (triangle_hz(hz) | lfo(move |t| xerp11(50.0, 5000.0, fractal_noise(0, 6, 0.5, t * 0.2))))
+    //         >> bandpass_q(5.0)
+}
 
-struct SineSink(Handle<AudioHandle<Sine>>, Handle<AudioSink<Sine>>);
+fn pad_sound_note(note: Note) -> impl AudioUnit32 {
+    pad_sound(note.get_frequency())
+}
+
+//TODO fix horrible hack
+fn sound0() -> impl AudioUnit32 {
+    pad_sound_note(Note(0))
+}
+fn sound1() -> impl AudioUnit32 {
+    pad_sound_note(Note(1))
+}
+fn sound2() -> impl AudioUnit32 {
+    pad_sound_note(Note(2))
+}
+fn sound3() -> impl AudioUnit32 {
+    pad_sound_note(Note(3))
+}
+fn sound4() -> impl AudioUnit32 {
+    pad_sound_note(Note(4))
+}
+fn sound5() -> impl AudioUnit32 {
+    pad_sound_note(Note(5))
+}
+fn sound6() -> impl AudioUnit32 {
+    pad_sound_note(Note(6))
+}
+fn sound7() -> impl AudioUnit32 {
+    pad_sound_note(Note(7))
+}
+fn sound8() -> impl AudioUnit32 {
+    pad_sound_note(Note(8))
+}
+fn sound9() -> impl AudioUnit32 {
+    pad_sound_note(Note(9))
+}
+fn sound10() -> impl AudioUnit32 {
+    pad_sound_note(Note(10))
+}
+fn sound11() -> impl AudioUnit32 {
+    pad_sound_note(Note(11))
+}
+
+//const PLAY_NOTE_FUNCTIONS: [dyn FnDspGraph; 12] = [play_note_0];
+
+fn init_dsp(mut dsp_manager: ResMut<DspManager>) {
+    // length is in seconds
+
+    //TODO fix horrible hack
+    dsp_manager.add_graph(sound0, 5.0);
+    dsp_manager.add_graph(sound1, 5.0);
+    dsp_manager.add_graph(sound2, 5.0);
+    dsp_manager.add_graph(sound3, 5.0);
+    dsp_manager.add_graph(sound4, 5.0);
+    dsp_manager.add_graph(sound5, 5.0);
+    dsp_manager.add_graph(sound6, 5.0);
+    dsp_manager.add_graph(sound7, 5.0);
+    dsp_manager.add_graph(sound8, 5.0);
+    dsp_manager.add_graph(sound9, 5.0);
+    dsp_manager.add_graph(sound10, 5.0);
+    dsp_manager.add_graph(sound11, 5.0);
+}
 
 #[derive(Default)]
 pub struct CurrentSound {
-    pub handles: Option<Vec<(Handle<AudioHandle<Sine>>, Handle<AudioSink<Sine>>)>>,
-}
-
-fn init_assets(mut commands: Commands, mut assets: ResMut<Assets<Sine>>) {
-    let handle = assets.add(Sine);
-    commands.insert_resource(SineHandle(handle));
+    pub handles: Option<Vec<Handle<AudioSink>>>,
 }
 
 fn stop_sounds(
     removals: RemovedComponents<PlayingSound>,
     mut current_sound: ResMut<CurrentSound>,
-    mut audio_handles: ResMut<Assets<AudioHandle<Sine>>>,
-    mut audio_sinks: ResMut<Assets<AudioSink<Sine>>>,
+    mut audio_sinks: ResMut<Assets<AudioSink>>,
 ) {
     for _entity in removals.iter() {
         if let Some(handles_vec) = &current_sound.handles {
-            stop_sine(handles_vec, &mut audio_handles, &mut audio_sinks);
+            stop_sound(handles_vec, &mut audio_sinks);
             current_sound.handles = None;
         }
     }
 }
 
 fn start_sounds(
-    mut commands: Commands,
     query: Query<&Orb, Added<PlayingSound>>,
     mut current_sound: ResMut<CurrentSound>,
-    mut audio: ResMut<Audio<Sample, Sine>>,
-    noise: Res<SineHandle>,
+
+    dsp_assets: Res<DspAssets>,
+    audio: Res<Audio>,
+    audio_sinks: Res<Assets<AudioSink>>,
 ) {
     for orb in query.iter() {
         if current_sound.handles.is_none() {
-            let handles = play_sine(
-                orb.cluster.clone(),
-                &mut commands,
-                &mut audio,
-                noise.clone(),
-            );
+            let handles = play_sound(orb.cluster.clone(), &dsp_assets, &audio, &audio_sinks);
             current_sound.handles = Some(handles);
         }
     }
 }
 
-fn play_sine(
+fn play_sound(
     cluster: Cluster,
-    commands: &mut Commands,
-    audio: &mut ResMut<Audio<Sample, Sine>>,
-    noise: Handle<Sine>,
-) -> Vec<(Handle<AudioHandle<Sine>>, Handle<AudioSink<Sine>>)> {
+    dsp_assets: &Res<DspAssets>,
+    audio: &Res<Audio>,
+    audio_sinks: &Res<Assets<AudioSink>>,
+) -> Vec<Handle<AudioSink>> {
     let handles_vec = cluster
         .notes
         .iter()
-        .map(|note| {
-            let handles = audio.play(
-                noise.clone(),
-                sine::Settings::new(0.0, note.get_frequency()),
-            );
-            let cloned_handles = (handles.0.clone_weak(), handles.1.clone_weak());
-            commands.insert_resource(SineSink(handles.0, handles.1));
-            cloned_handles
+        .map(|&note| {
+            //TODO fix horrible hack
+            let audio_source = match note.0 {
+                0 => dsp_assets.graph(&sound0),
+                1 => dsp_assets.graph(&sound1),
+                2 => dsp_assets.graph(&sound2),
+                3 => dsp_assets.graph(&sound3),
+                4 => dsp_assets.graph(&sound4),
+                5 => dsp_assets.graph(&sound5),
+                6 => dsp_assets.graph(&sound6),
+                7 => dsp_assets.graph(&sound7),
+                8 => dsp_assets.graph(&sound8),
+                9 => dsp_assets.graph(&sound9),
+                10 => dsp_assets.graph(&sound10),
+                11 => dsp_assets.graph(&sound11),
+                _ => unimplemented!(),
+            };
+
+            let weak_handle = audio.play(audio_source);
+            let strong_handle = audio_sinks.get_handle(weak_handle);
+
+            strong_handle
         })
         .collect_vec();
 
     handles_vec
 }
 
-fn stop_sine(
-    handles_vec: &Vec<(Handle<AudioHandle<Sine>>, Handle<AudioSink<Sine>>)>,
-    audio_handles: &mut ResMut<Assets<AudioHandle<Sine>>>,
-    audio_sinks: &mut ResMut<Assets<AudioSink<Sine>>>,
-) {
-    for handles in handles_vec {
-        audio_handles.remove(&handles.0);
-
-        if let Some(mut audio_sink) = audio_sinks.remove(handles.1.clone()) {
-            audio_sink.control::<oddio::Stop<_>, _>().stop();
+fn stop_sound(handles_vec: &Vec<Handle<AudioSink>>, audio_sinks: &mut ResMut<Assets<AudioSink>>) {
+    for handle in handles_vec {
+        if let Some(audio_sink) = audio_sinks.remove(handle) {
+            audio_sink.stop();
         }
     }
 }

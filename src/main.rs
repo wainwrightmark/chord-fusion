@@ -1,6 +1,5 @@
 #![allow(dead_code)]
 use bevy::DefaultPlugins;
-use bevy_oddio::AudioPlugin;
 
 use bevy::log::*;
 use bevy::prelude::*;
@@ -62,7 +61,7 @@ fn main() {
         .insert_resource(ClearColor(Color::rgb(0.9, 0.9, 0.95)))
         .add_plugins(DefaultPlugins)
         .add_plugin(TweeningPlugin)
-        .add_plugin(AudioPlugin)
+        //.add_plugin(AudioPlugin)
         .add_plugin(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(
             WINDOW_HEIGHT / 10.0,
         ))
