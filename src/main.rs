@@ -5,13 +5,14 @@ use bevy::log::*;
 use bevy::prelude::*;
 use bevy_prototype_lyon::prelude::*;
 use bevy_rapier2d::prelude::*;
+use bevy_tweening::TweeningPlugin;
 
 pub const WINDOW_WIDTH: f32 = 360f32;
 pub const WINDOW_HEIGHT: f32 = 640f32;
 pub const WALL_WIDTH: f32 = 360f32;
 
 mod draggable;
-use bevy_tweening::TweeningPlugin;
+
 use draggable::*;
 mod events;
 use events::*;
@@ -50,11 +51,16 @@ use objective::*;
 mod level;
 use level::*;
 
+mod notes_playing;
+use notes_playing::*;
+
+pub mod prelude {}
 
 pub const CLEAR_COLOR: Color = Color::DARK_GRAY;
 pub const FIXED_OBJECT_STROKE: Color = Color::ANTIQUE_WHITE;
 pub const FIXED_OBJECT_FILL: Color = Color::GRAY;
 pub const COMPLETE_OBJECTIVE_FILL: Color = Color::GOLD;
+pub const EXCITED_OBJECTIVE_FILL: Color = Color::SILVER;
 pub const CHORD_COLOR: Color = Color::ANTIQUE_WHITE;
 //pub const NON_SELECTED_CHORD_COLOR :Color = Color::NONE;
 
@@ -98,6 +104,7 @@ fn main() {
         .add_plugin(DeconstructPlugin)
         .add_plugin(ObjectivePlugin)
         .add_plugin(LevelPlugin)
+        .add_plugin(NotesPlayingPlugin)
         .add_startup_system(setup.label("main_setup"))
         //.add_startup_system_to_stage(StartupStage::PostStartup, create_initial_orbs)
         .run();

@@ -1,7 +1,4 @@
-use crate::{
-    cluster::*,
-    components::{Orb, PlayingSound},
-};
+use crate::{cluster::*, events::*};
 use bevy::{audio::AudioSink, prelude::*};
 use bevy_fundsp::prelude::*;
 use itertools::Itertools;
@@ -16,7 +13,11 @@ impl Plugin for SoundPlugin {
                 start_all_sounds.label("start_all_sounds"),
             )
             .init_resource::<NoteHandles>()
-            .add_system_to_stage(CoreStage::PostUpdate, set_sounds.label("stop_sounds"));
+            .add_system(
+                set_sounds
+                    .label("stop_sounds")
+                    .after("track_notes_playing_changes"),
+            );
     }
 }
 
@@ -135,19 +136,14 @@ pub struct NoteHandles {
 }
 
 fn set_sounds(
-    playing_orbs: Query<(Entity, &Orb, &PlayingSound)>,
-    removals: RemovedComponents<PlayingSound>,
-    additions: Query<&PlayingSound, Added<PlayingSound>>,
+    mut er: EventReader<NotesPlayingChangedEvent>,
     note_handles: Res<NoteHandles>,
     audio_sinks: ResMut<Assets<AudioSink>>,
 ) {
-    if removals.iter().next().is_some() || additions.iter().next().is_some() {
+    if let Some(ev) = er.iter().last() {
         if let Some(handles) = &note_handles.handles {
             //something has changed. Reset all volumes
-            let counts = playing_orbs
-                .iter()
-                .flat_map(|x| x.1.cluster.notes.clone())
-                .counts();
+            let counts = ev.notes.iter().counts();
 
             let total: usize = counts.values().sum();
 

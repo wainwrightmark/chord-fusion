@@ -9,10 +9,7 @@ use bevy_tweening::{
 };
 use rand::Rng;
 
-use crate::{
-    cluster::*,
-    components::NoteCircle,
-};
+use crate::{cluster::*, components::NoteCircle};
 
 pub const SHAPE_SIZE: f32 = 60f32;
 pub const ANIMATION_SECONDS: u64 = 1;

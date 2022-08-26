@@ -3,7 +3,7 @@ use bevy_prototype_lyon::prelude::*;
 use itertools::Itertools;
 use smallvec::ToSmallVec;
 
-use crate::{cluster::*, components::*, BIG_TEXT_COLOR, SMALL_TEXT_COLOR};
+use crate::{cluster::*, components::*, events::*, BIG_TEXT_COLOR, SMALL_TEXT_COLOR};
 
 pub struct ChordTextPlugin;
 
@@ -12,7 +12,7 @@ impl Plugin for ChordTextPlugin {
         app.add_startup_system(setup)
             .add_system_to_stage(CoreStage::PostUpdate, set_drawmode_for_playing)
             .add_system_to_stage(CoreStage::PostUpdate, set_drawmode_for_stopped_playing)
-            .add_system_to_stage(CoreStage::PostUpdate, change_chord_text);
+            .add_system(change_chord_text.after("track_notes_playing_changes"));
     }
 }
 
@@ -37,18 +37,17 @@ pub fn set_drawmode_for_stopped_playing(
 }
 
 fn change_chord_text(
-    playing_orbs: Query<(Entity, &Orb, &PlayingSound)>,
-    removals: RemovedComponents<PlayingSound>,
-    additions: Query<&PlayingSound, Added<PlayingSound>>,
+    mut er: EventReader<NotesPlayingChangedEvent>,
     mut text_query: Query<(&ChordTextComponent, &mut Text)>,
 ) {
-    if removals.iter().next().is_some() || additions.iter().next().is_some() {
+    if let Some(ev) = er.iter().last() {
         //something has changed. Reset chord text
-        let notes = playing_orbs
+        let notes = ev
+            .notes
             .iter()
-            .flat_map(|x| x.1.cluster.notes.clone())
             .sorted()
             .dedup()
+            .cloned()
             .collect_vec()
             .to_smallvec();
 
@@ -58,8 +57,8 @@ fn change_chord_text(
             let chord_name_option = cluster.get_chord_name();
 
             if let Some(chord_name) = chord_name_option {
-                text.sections[0].value = chord_name;// format!("{: >10}", chord_name) ;
-                text.sections[1].value =  cluster.get_notes_text();
+                text.sections[0].value = chord_name; // format!("{: >10}", chord_name) ;
+                text.sections[1].value = cluster.get_notes_text();
             } else {
                 text.sections[0].value = cluster.get_notes_text();
                 text.sections[1].value = "".to_string();
@@ -70,32 +69,32 @@ fn change_chord_text(
 
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands
-        .spawn_bundle(NodeBundle{
+        .spawn_bundle(NodeBundle {
             color: Color::NONE.into(),
-            style: Style{
+            style: Style {
                 align_self: AlignSelf::FlexEnd,
                 position_type: PositionType::Absolute,
                 flex_grow: 0.,
-                ..Default::default()    
+                ..Default::default()
             },
             ..Default::default()
         })
-        .with_children(|f| {f
-        .spawn_bundle(
-            TextBundle::from_sections([
-                TextSection::from_style(TextStyle {
-                    font: asset_server.load("fonts/FiraSans-Bold.ttf"),
-                    font_size: 60.0,
-                    color: BIG_TEXT_COLOR,
-                }),
-                TextSection::from_style(TextStyle {
-                    font: asset_server.load("fonts/FiraMono-Medium.ttf"),
-                    font_size: 40.0,
-                    color: SMALL_TEXT_COLOR,
-                }),
-            ]) // Set the alignment of the Text
-            .with_text_alignment(TextAlignment::TOP_LEFT)
-            // Set the style of the TextBundle itself.,
-        )
-        .insert(ChordTextComponent {});});
+        .with_children(|f| {
+            f.spawn_bundle(
+                TextBundle::from_sections([
+                    TextSection::from_style(TextStyle {
+                        font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                        font_size: 60.0,
+                        color: BIG_TEXT_COLOR,
+                    }),
+                    TextSection::from_style(TextStyle {
+                        font: asset_server.load("fonts/FiraMono-Medium.ttf"),
+                        font_size: 40.0,
+                        color: SMALL_TEXT_COLOR,
+                    }),
+                ]) // Set the alignment of the Text
+                .with_text_alignment(TextAlignment::TOP_LEFT), // Set the style of the TextBundle itself.,
+            )
+            .insert(ChordTextComponent {});
+        });
 }

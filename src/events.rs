@@ -1,3 +1,4 @@
+use crate::cluster::*;
 use bevy::prelude::*;
 
 pub struct EventsPlugin;
@@ -9,8 +10,14 @@ impl Plugin for EventsPlugin {
             .add_event::<DragEndEvent>()
             .add_event::<NewGameEvent>()
             .add_event::<CombineEvent>()
-            .add_event::<DragEndWithIntersection>();
+            .add_event::<DragEndWithIntersection>()
+            .add_event::<NotesPlayingChangedEvent>();
     }
+}
+
+#[derive(Debug)]
+pub struct NotesPlayingChangedEvent {
+    pub notes: Vec<Note>,
 }
 
 #[derive(Debug)]

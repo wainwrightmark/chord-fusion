@@ -20,13 +20,13 @@ impl Plugin for LevelPlugin {
 
 fn setup_level_text(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands
-        .spawn_bundle(NodeBundle{
+        .spawn_bundle(NodeBundle {
             color: Color::NONE.into(),
-            style: Style{
+            style: Style {
                 align_self: AlignSelf::Center,
                 position_type: PositionType::Absolute,
                 flex_grow: 0.,
-                ..Default::default()    
+                ..Default::default()
             },
             ..Default::default()
         })

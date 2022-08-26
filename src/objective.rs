@@ -1,18 +1,25 @@
 use bevy::prelude::*;
+use itertools::Itertools;
+use smallvec::ToSmallVec;
 
+use crate::cluster::*;
 use crate::*;
 
 pub struct ObjectivePlugin;
 impl Plugin for ObjectivePlugin {
     fn build(&self, app: &mut App) {
         app
-        //.add_startup_system(init_objectives)
+            //.add_startup_system(init_objectives)
             .add_system(
                 check_for_completions
                     .label("check_for_completions")
                     .after("drag_end"),
             )
-            .add_system_to_stage(CoreStage::PostUpdate, update_met_objectives.label("update_met_objectives"));
+            .add_system(set_objective_colors.after("track_notes_playing_changes"))
+            .add_system_to_stage(
+                CoreStage::PostUpdate,
+                update_met_objectives.label("update_met_objectives"),
+            );
     }
 }
 
@@ -27,23 +34,49 @@ pub struct CompletingObjective {
     pub objective: Entity,
 }
 
-// fn init_objectives(
-//     mut commands: Commands,
-//     // asset_server: Res<AssetServer>
-// ) {
-//     create_objective(
-//         &mut commands,
-//         //&asset_server,
-//         0,
-//         2,
-//     );
-//     create_objective(
-//         &mut commands,
-//         //&asset_server,
-//         1,
-//         2,
-//     );
-// }
+fn set_objective_colors(
+    mut er: EventReader<NotesPlayingChangedEvent>,
+    mut objectives_query: Query<(&Objective, &mut DrawMode)>,
+) {
+    if let Some(ev) = er.iter().last() {
+        //something has changed. Reset chord text
+        let notes = ev
+            .notes
+            .iter()
+            .sorted()
+            .dedup()
+            .cloned()
+            .collect_vec()
+            .to_smallvec();
+
+        let cluster = Cluster { notes };
+        let chord_option = cluster.get_chord();
+
+        for (objective, mut draw_mode) in objectives_query.iter_mut() {
+            if !objective.is_complete {
+                let excited: bool = if let Some(chord) = chord_option {
+                    if let Some(filter) = objective.filter {
+                        filter == chord.1
+                    } else {
+                        true
+                    }
+                } else {
+                    false
+                };
+
+                if excited {
+                    if draw_mode.ne(&incomplete_excited_objective_draw_mode()) {
+                        *draw_mode = incomplete_excited_objective_draw_mode();
+                    }
+                } else {
+                    if draw_mode.ne(&incomplete_objective_draw_mode()) {
+                        *draw_mode = incomplete_objective_draw_mode();
+                    }
+                }
+            }
+        }
+    }
+}
 
 fn check_for_completions(
     mut commands: Commands,
@@ -108,6 +141,13 @@ fn complete_objective_draw_mode() -> DrawMode {
 fn incomplete_objective_draw_mode() -> DrawMode {
     DrawMode::Outlined {
         fill_mode: bevy_prototype_lyon::prelude::FillMode::color(FIXED_OBJECT_FILL),
+        outline_mode: StrokeMode::new(FIXED_OBJECT_STROKE, 3.0),
+    }
+}
+
+fn incomplete_excited_objective_draw_mode() -> DrawMode {
+    DrawMode::Outlined {
+        fill_mode: bevy_prototype_lyon::prelude::FillMode::color(EXCITED_OBJECTIVE_FILL),
         outline_mode: StrokeMode::new(FIXED_OBJECT_STROKE, 3.0),
     }
 }
