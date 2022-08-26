@@ -3,7 +3,7 @@ use bevy_prototype_lyon::prelude::*;
 use itertools::Itertools;
 use smallvec::ToSmallVec;
 
-use crate::{cluster::*, components::*};
+use crate::{cluster::*, components::*, BIG_TEXT_COLOR, SMALL_TEXT_COLOR};
 
 pub struct ChordTextPlugin;
 
@@ -77,12 +77,12 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                 TextSection::from_style(TextStyle {
                     font: asset_server.load("fonts/FiraSans-Bold.ttf"),
                     font_size: 60.0,
-                    color: Color::MIDNIGHT_BLUE,
+                    color: BIG_TEXT_COLOR,
                 }),
                 TextSection::from_style(TextStyle {
                     font: asset_server.load("fonts/FiraMono-Medium.ttf"),
                     font_size: 40.0,
-                    color: Color::DARK_GRAY,
+                    color: SMALL_TEXT_COLOR,
                 }),
             ]) // Set the alignment of the Text
             .with_text_alignment(TextAlignment::TOP_LEFT)

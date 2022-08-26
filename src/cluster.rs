@@ -1,10 +1,11 @@
 use std::fmt::Debug;
 
 use bevy::prelude::Color;
-use bevy_prototype_lyon::prelude::{DrawMode, FillMode, StrokeMode};
+use bevy_prototype_lyon::prelude::*;
 use itertools::Itertools;
 use smallvec::*;
 
+use crate::*;
 use crate::chord::*;
 
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
@@ -36,10 +37,10 @@ impl Cluster {
         }
         else{
             if playing {
-                DrawMode::Fill(FillMode::color(Color::DARK_GRAY))
+                DrawMode::Fill(FillMode::color(CHORD_COLOR))
             }
-            else{
-                DrawMode::Stroke(StrokeMode::color(Color::DARK_GRAY))
+            else{                
+                DrawMode::Stroke(StrokeMode::color(CHORD_COLOR))
             }
         }
     }
@@ -169,12 +170,12 @@ impl Note {
     }
 
     pub fn get_color(self) -> Color {
-        let hue = 30.0 * (self.0 as f32);
+        let hue = (210. * (self.0 as f32)) % 360.;
         Color::Hsla {
             hue,
             saturation: 0.7,
             lightness: 0.8,
-            alpha: 1.0,
+            alpha: 0.8,
         }
     }
     

@@ -120,7 +120,7 @@ pub fn create_orb(
     };
 
     for (i, note) in cluster.notes.iter().enumerate() {
-        let child_angle = (TAU * (i as f32)) / (num_children as f32);
+        let child_angle = (TAU * (note.0 as f32)) / 12.;
 
         let child_translation = child_distance
             .rotate(Vec2::from_angle(child_angle))

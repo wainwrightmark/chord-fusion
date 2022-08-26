@@ -89,7 +89,7 @@ fn create_deconstructor(commands: &mut Commands, shape_size: f32, position: Vec2
         .insert_bundle(GeometryBuilder::build_as(
             &geo,
             bevy_prototype_lyon::prelude::DrawMode::Stroke(
-                bevy_prototype_lyon::draw::StrokeMode::new(Color::DARK_GRAY, 3.0),
+                bevy_prototype_lyon::draw::StrokeMode::new(FIXED_OBJECT_COLOR, 3.0),
             ),
             Transform::default(),
         ))

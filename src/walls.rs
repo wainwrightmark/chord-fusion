@@ -11,7 +11,7 @@ impl Plugin for WallsPlugin {
 }
 
 fn spawn_walls(mut commands: Commands) {
-    let color = Color::GRAY;
+    let color = FIXED_OBJECT_COLOR;
     const OFFSET: f32 = crate::WALL_WIDTH / 2.0;
     const EXTRA_WIDTH: f32 = crate::WALL_WIDTH * 2.0;
 
