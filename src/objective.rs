@@ -5,13 +5,14 @@ use crate::*;
 pub struct ObjectivePlugin;
 impl Plugin for ObjectivePlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(init_objectives)
+        app
+        //.add_startup_system(init_objectives)
             .add_system(
                 check_for_completions
                     .label("check_for_completions")
                     .after("drag_end"),
             )
-            .add_system_to_stage(CoreStage::PostUpdate, update_met_objectives);
+            .add_system_to_stage(CoreStage::PostUpdate, update_met_objectives.label("update_met_objectives"));
     }
 }
 
@@ -26,23 +27,23 @@ pub struct CompletingObjective {
     pub objective: Entity,
 }
 
-fn init_objectives(
-    mut commands: Commands,
-    // asset_server: Res<AssetServer>
-) {
-    create_objective(
-        &mut commands,
-        //&asset_server,
-        0,
-        2,
-    );
-    create_objective(
-        &mut commands,
-        //&asset_server,
-        1,
-        2,
-    );
-}
+// fn init_objectives(
+//     mut commands: Commands,
+//     // asset_server: Res<AssetServer>
+// ) {
+//     create_objective(
+//         &mut commands,
+//         //&asset_server,
+//         0,
+//         2,
+//     );
+//     create_objective(
+//         &mut commands,
+//         //&asset_server,
+//         1,
+//         2,
+//     );
+// }
 
 fn check_for_completions(
     mut commands: Commands,
@@ -111,7 +112,7 @@ fn incomplete_objective_draw_mode() -> DrawMode {
     }
 }
 
-fn create_objective(
+pub fn create_objective(
     commands: &mut Commands,
     //asset_server: &Res<AssetServer>,
     index: usize,

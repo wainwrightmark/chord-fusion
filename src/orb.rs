@@ -10,38 +10,38 @@ use bevy_tweening::{
 use rand::Rng;
 
 use crate::{
-    cluster::{Cluster, Note},
+    cluster::*,
     components::NoteCircle,
 };
 
 pub const SHAPE_SIZE: f32 = 60f32;
 pub const ANIMATION_SECONDS: u64 = 1;
 
-pub fn create_initial_orbs(mut commands: Commands) {
-    let start_clusters = [
-        Note(0).into(),
-        Note(2).into(),
-        Note(4).into(),
-        Note(5).into(),
-        Note(7).into(),
-        Note(9).into(),
-        Note(11).into(),
-    ];
+// pub fn create_initial_orbs(mut commands: Commands) {
+//     let start_clusters = [
+//         Note(0).into(),
+//         Note(2).into(),
+//         Note(4).into(),
+//         Note(5).into(),
+//         Note(7).into(),
+//         Note(9).into(),
+//         Note(11).into(),
+//     ];
 
-    let rangex = -100f32..100f32;
-    let rangey = -100f32..100f32;
+//     let rangex = -100f32..100f32;
+//     let rangey = -100f32..100f32;
 
-    for cluster in start_clusters {
-        create_orb_near(
-            &mut commands,
-            SHAPE_SIZE,
-            cluster,
-            rangex.clone(),
-            rangey.clone(),
-            &mut Default::default(),
-        );
-    }
-}
+//     for cluster in start_clusters {
+//         create_orb_near(
+//             &mut commands,
+//             SHAPE_SIZE,
+//             cluster,
+//             rangex.clone(),
+//             rangey.clone(),
+//             &mut Default::default(),
+//         );
+//     }
+// }
 
 pub fn create_orb_near(
     commands: &mut Commands,

@@ -47,6 +47,10 @@ use chord_text::*;
 mod objective;
 use objective::*;
 
+mod level;
+use level::*;
+
+
 pub const CLEAR_COLOR: Color = Color::DARK_GRAY;
 pub const FIXED_OBJECT_STROKE: Color = Color::ANTIQUE_WHITE;
 pub const FIXED_OBJECT_FILL: Color = Color::GRAY;
@@ -93,8 +97,9 @@ fn main() {
         .add_plugin(CombinePlugin)
         .add_plugin(DeconstructPlugin)
         .add_plugin(ObjectivePlugin)
+        .add_plugin(LevelPlugin)
         .add_startup_system(setup.label("main_setup"))
-        .add_startup_system_to_stage(StartupStage::PostStartup, create_initial_orbs)
+        //.add_startup_system_to_stage(StartupStage::PostStartup, create_initial_orbs)
         .run();
 }
 
