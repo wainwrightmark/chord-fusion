@@ -5,8 +5,8 @@ use bevy_prototype_lyon::prelude::*;
 use itertools::Itertools;
 use smallvec::*;
 
-use crate::*;
 use crate::chord::*;
+use crate::*;
 
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
 pub struct Cluster {
@@ -22,24 +22,17 @@ impl From<Note> for Cluster {
 }
 
 impl Cluster {
-
-    pub fn get_draw_mode(&self, playing: bool) -> DrawMode{
-        if self.notes.len()== 1{
-
+    pub fn get_draw_mode(&self, playing: bool) -> DrawMode {
+        if self.notes.len() == 1 {
             if playing {
                 DrawMode::Fill(FillMode::color(self.notes[0].get_dark_color()))
-            }
-            else{
+            } else {
                 DrawMode::Fill(FillMode::color(Color::NONE))
             }
-
-            
-        }
-        else{
+        } else {
             if playing {
                 DrawMode::Fill(FillMode::color(CHORD_COLOR))
-            }
-            else{                
+            } else {
                 DrawMode::Stroke(StrokeMode::color(CHORD_COLOR))
             }
         }
@@ -178,7 +171,7 @@ impl Note {
             alpha: 0.8,
         }
     }
-    
+
     pub fn get_dark_color(self) -> Color {
         let hue = 30.0 * (self.0 as f32);
         Color::Hsla {

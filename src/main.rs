@@ -44,15 +44,13 @@ mod chord;
 mod chord_text;
 use chord_text::*;
 
-pub const CLEAR_COLOR :Color = Color::DARK_GRAY;
-pub const FIXED_OBJECT_COLOR :Color = Color::ANTIQUE_WHITE;
-pub const CHORD_COLOR :Color = Color::ANTIQUE_WHITE;
+pub const CLEAR_COLOR: Color = Color::DARK_GRAY;
+pub const FIXED_OBJECT_COLOR: Color = Color::ANTIQUE_WHITE;
+pub const CHORD_COLOR: Color = Color::ANTIQUE_WHITE;
 //pub const NON_SELECTED_CHORD_COLOR :Color = Color::NONE;
 
-pub const BIG_TEXT_COLOR :Color = Color::GOLD;
-pub const SMALL_TEXT_COLOR :Color = Color::ALICE_BLUE;
-
-
+pub const BIG_TEXT_COLOR: Color = Color::GOLD;
+pub const SMALL_TEXT_COLOR: Color = Color::ALICE_BLUE;
 
 fn main() {
     // When building for WASM, print panics to the browser console

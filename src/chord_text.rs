@@ -12,28 +12,26 @@ impl Plugin for ChordTextPlugin {
         app.add_startup_system(setup)
             .add_system_to_stage(CoreStage::PostUpdate, set_drawmode_for_playing)
             .add_system_to_stage(CoreStage::PostUpdate, set_drawmode_for_stopped_playing)
-            .add_system_to_stage(CoreStage::PostUpdate, change_chord_text)
-            
-            ;
+            .add_system_to_stage(CoreStage::PostUpdate, change_chord_text);
     }
 }
 
 #[derive(Component)]
 pub struct ChordTextComponent {}
 
-pub fn set_drawmode_for_playing(mut query:  Query<(&mut DrawMode, &Orb, Added<PlayingSound>)>) {
-    for (mut dm, orb, _) in query.iter_mut(){
-        *dm =orb.cluster.get_draw_mode(true);
-    }    
+pub fn set_drawmode_for_playing(mut query: Query<(&mut DrawMode, &Orb, Added<PlayingSound>)>) {
+    for (mut dm, orb, _) in query.iter_mut() {
+        *dm = orb.cluster.get_draw_mode(true);
+    }
 }
 
-pub fn set_drawmode_for_stopped_playing(mut query:  Query<(&mut DrawMode, &Orb)>,
-removals: RemovedComponents<PlayingSound>
+pub fn set_drawmode_for_stopped_playing(
+    mut query: Query<(&mut DrawMode, &Orb)>,
+    removals: RemovedComponents<PlayingSound>,
 ) {
-
-    for rem in removals.iter(){
-        if let Ok((mut dm, orb)) = query.get_mut(rem){
-            *dm =orb.cluster.get_draw_mode(false);
+    for rem in removals.iter() {
+        if let Ok((mut dm, orb)) = query.get_mut(rem) {
+            *dm = orb.cluster.get_draw_mode(false);
         }
     }
 }

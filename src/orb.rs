@@ -1,7 +1,7 @@
 use std::{f32::consts::TAU, ops::Range, time::Duration};
 
 use bevy::prelude::*;
-use bevy_prototype_lyon::{prelude::{GeometryBuilder}, shapes};
+use bevy_prototype_lyon::{prelude::GeometryBuilder, shapes};
 use bevy_rapier2d::prelude::*;
 use bevy_tweening::{
     lens::{TransformPositionLens, TransformScaleLens},
@@ -11,7 +11,7 @@ use rand::Rng;
 
 use crate::{
     cluster::{Cluster, Note},
-    components::{NoteCircle},
+    components::NoteCircle,
 };
 
 pub const SHAPE_SIZE: f32 = 60f32;
@@ -67,8 +67,6 @@ pub fn create_orb_near(
     )
 }
 
-
-
 pub fn create_orb(
     commands: &mut Commands,
     shape_size: f32,
@@ -89,8 +87,6 @@ pub fn create_orb(
     let mut entity_builder = commands.spawn();
 
     let num_children = cluster.notes.len();
-
-    
 
     entity_builder.insert_bundle(GeometryBuilder::build_as(
         &shapes::Circle {
@@ -119,7 +115,7 @@ pub fn create_orb(
         z: 1.,
     };
 
-    for (i, note) in cluster.notes.iter().enumerate() {
+    for note in cluster.notes.iter() {
         let child_angle = (TAU * (note.0 as f32)) / 12.;
 
         let child_translation = child_distance

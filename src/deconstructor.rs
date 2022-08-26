@@ -1,5 +1,8 @@
-use bevy::{prelude::*};
-use bevy_prototype_lyon::{prelude::GeometryBuilder, shapes::{self, Polygon}};
+use bevy::prelude::*;
+use bevy_prototype_lyon::{
+    prelude::GeometryBuilder,
+    shapes::{self, Polygon},
+};
 use bevy_rapier2d::prelude::*;
 use itertools::Itertools;
 
@@ -60,12 +63,9 @@ fn triangle_geometry(shape_size: f32) -> Polygon {
     shapes::Polygon {
         closed: true,
         points: vec![
-
             Vec2::new(0., root_3 * shape_size * 0.25),
-
             Vec2::new(-shape_size * 0.5, -root_3 * shape_size * 0.25),
             Vec2::new(shape_size * 0.5, -root_3 * shape_size * 0.25),
-            
         ],
     }
 }
@@ -73,8 +73,9 @@ fn triangle_geometry(shape_size: f32) -> Polygon {
 fn create_deconstructor(commands: &mut Commands, shape_size: f32, position: Vec2, angle: f32) {
     let geo = triangle_geometry(shape_size);
 
-        let collider_shape =
-            Collider::convex_hull(&geo.points.iter().map(|v| Vect::new(v.x, v.y)).collect_vec()).unwrap();
+    let collider_shape =
+        Collider::convex_hull(&geo.points.iter().map(|v| Vect::new(v.x, v.y)).collect_vec())
+            .unwrap();
     let transform: Transform = Transform {
         translation: position.extend(1.0),
         rotation: Quat::from_rotation_x(angle),

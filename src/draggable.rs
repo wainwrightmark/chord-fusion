@@ -45,20 +45,23 @@ fn drag_end(
 
                 if all_contacts.len() > 1 {
                     ew_combine.send(CombineEvent(all_contacts));
-                }
-
-                if let Some(point) = event.position {
-                    rapier_context.intersections_with_point(
-                        point,
-                        QueryFilter::exclude_collider(QueryFilter::default(), entity),
-                        |e| {
-                            ew_deconstruct.send(DragEndWithIntersection {
-                                dragged: entity,
-                                target: e,
-                            });
-                            false
-                        },
-                    );
+                } else {
+                    if let Some(point) = event.position {
+                        rapier_context.intersections_with_point(
+                            point,
+                            QueryFilter::exclude_collider(
+                                QueryFilter::exclude_solids(QueryFilter::default()),
+                                entity,
+                            ),
+                            |e| {
+                                ew_deconstruct.send(DragEndWithIntersection {
+                                    dragged: entity,
+                                    target: e,
+                                });
+                                false
+                            },
+                        );
+                    }
                 }
 
                 commands
@@ -100,7 +103,7 @@ fn drag_move(
             rb.translation = new_position;
 
             let mut remaining_undragged_players: HashSet<_> =
-                undragged_players.iter().map(|(e,_,_)| e).collect();
+                undragged_players.iter().map(|(e, _, _)| e).collect();
 
             let all_contacts = rapier_context
                 .contacts_with(entity)
@@ -110,15 +113,15 @@ fn drag_move(
                 .dedup()
                 .collect_vec();
 
-            for c_entity in all_contacts{
-                if c_entity != entity{
-                    if !remaining_undragged_players.remove(&c_entity){
+            for c_entity in all_contacts {
+                if c_entity != entity {
+                    if !remaining_undragged_players.remove(&c_entity) {
                         //this entity was not previously playing sound
-                        commands.entity(c_entity).insert(PlayingSound{});
+                        commands.entity(c_entity).insert(PlayingSound {});
                     }
                 }
             }
-            for rem in remaining_undragged_players{
+            for rem in remaining_undragged_players {
                 //This entity is not in contact but is playing sound, remove the thingy
                 commands.entity(rem).remove::<PlayingSound>();
             }

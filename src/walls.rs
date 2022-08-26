@@ -83,12 +83,5 @@ fn spawn_wall(
         .insert(Transform::from_translation(point.extend(0.0)))
         .insert(collider_shape.clone())
         .insert(Name::new(name.to_string()))
-        .insert(Wall {})
-        .with_children(|f| {
-            f.spawn()
-                .insert(collider_shape)
-                .insert(Sensor {})
-                .insert(ActiveEvents::COLLISION_EVENTS)
-                .insert(Name::new(name));
-        });
+        .insert(Wall {});
 }
