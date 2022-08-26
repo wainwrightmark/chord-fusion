@@ -58,8 +58,8 @@ fn change_chord_text(
             let chord_name_option = cluster.get_chord_name();
 
             if let Some(chord_name) = chord_name_option {
-                text.sections[0].value = chord_name;
-                text.sections[1].value = cluster.get_notes_text();
+                text.sections[0].value = chord_name;// format!("{: >10}", chord_name) ;
+                text.sections[1].value =  cluster.get_notes_text();
             } else {
                 text.sections[0].value = cluster.get_notes_text();
                 text.sections[1].value = "".to_string();
@@ -70,6 +70,17 @@ fn change_chord_text(
 
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands
+        .spawn_bundle(NodeBundle{
+            color: Color::NONE.into(),
+            style: Style{
+                align_self: AlignSelf::FlexEnd,
+                position_type: PositionType::Absolute,
+                flex_grow: 0.,
+                ..Default::default()    
+            },
+            ..Default::default()
+        })
+        .with_children(|f| {f
         .spawn_bundle(
             TextBundle::from_sections([
                 TextSection::from_style(TextStyle {
@@ -84,11 +95,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                 }),
             ]) // Set the alignment of the Text
             .with_text_alignment(TextAlignment::TOP_LEFT)
-            // Set the style of the TextBundle itself.
-            .with_style(Style {
-                align_self: AlignSelf::FlexEnd,
-                ..default()
-            }),
+            // Set the style of the TextBundle itself.,
         )
-        .insert(ChordTextComponent {});
+        .insert(ChordTextComponent {});});
 }
