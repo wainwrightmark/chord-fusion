@@ -1,5 +1,5 @@
-use bevy::prelude::*;
-use bevy_prototype_lyon::{prelude::GeometryBuilder, shapes};
+use bevy::{prelude::*};
+use bevy_prototype_lyon::{prelude::GeometryBuilder, shapes::{self, Polygon}};
 use bevy_rapier2d::prelude::*;
 use itertools::Itertools;
 
@@ -54,8 +54,27 @@ fn init_deconstructor(mut commands: Commands) {
     create_deconstructor(&mut commands, SHAPE_SIZE, Vec2 { x: 0., y: 200. }, 0.0);
 }
 
+fn triangle_geometry(shape_size: f32) -> Polygon {
+    let root_3 = 3.0_f32.sqrt();
+
+    shapes::Polygon {
+        closed: true,
+        points: vec![
+
+            Vec2::new(0., root_3 * shape_size * 0.25),
+
+            Vec2::new(-shape_size * 0.5, -root_3 * shape_size * 0.25),
+            Vec2::new(shape_size * 0.5, -root_3 * shape_size * 0.25),
+            
+        ],
+    }
+}
+
 fn create_deconstructor(commands: &mut Commands, shape_size: f32, position: Vec2, angle: f32) {
-    let collider_shape = Collider::cuboid(shape_size / 2., shape_size / 2.);
+    let geo = triangle_geometry(shape_size);
+
+        let collider_shape =
+            Collider::convex_hull(&geo.points.iter().map(|v| Vect::new(v.x, v.y)).collect_vec()).unwrap();
     let transform: Transform = Transform {
         translation: position.extend(1.0),
         rotation: Quat::from_rotation_x(angle),
@@ -68,15 +87,9 @@ fn create_deconstructor(commands: &mut Commands, shape_size: f32, position: Vec2
 
     entity_builder
         .insert_bundle(GeometryBuilder::build_as(
-            &shapes::Rectangle {
-                origin: Default::default(),
-                extents: Vec2 {
-                    x: shape_size,
-                    y: shape_size,
-                },
-            },
+            &geo,
             bevy_prototype_lyon::prelude::DrawMode::Stroke(
-                bevy_prototype_lyon::draw::StrokeMode::color(Color::DARK_GRAY),
+                bevy_prototype_lyon::draw::StrokeMode::new(Color::DARK_GRAY, 3.0),
             ),
             Transform::default(),
         ))

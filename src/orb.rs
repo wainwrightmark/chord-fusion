@@ -79,7 +79,7 @@ pub fn create_orb(
 ) {
     let collider_shape = Collider::ball(shape_size / 2.);
     let transform: Transform = Transform {
-        translation: position.extend(0.0),
+        translation: position.extend(2.0),
         rotation: Quat::from_rotation_x(angle),
         scale: Vec3::ONE,
     };
@@ -124,7 +124,7 @@ pub fn create_orb(
 
         let child_translation = child_distance
             .rotate(Vec2::from_angle(child_angle))
-            .extend(1.);
+            .extend(5.);
 
         if let Some(index) = existing_note_circles.iter().position(|x| &x.1.note == note) {
             let (entity, _, gt) = existing_note_circles.remove(index);

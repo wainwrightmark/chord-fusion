@@ -12,3 +12,6 @@
 - [x] Combining / Deconstructing animations
 - [ ] Help file explaining what to do
 - [ ] Chord text should be same color as notes
+- [ ] Level names
+- [ ] Puns
+- [ ] Levels can be in different keys
