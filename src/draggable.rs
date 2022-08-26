@@ -149,6 +149,7 @@ fn drag_start(
                         drag_source: event.drag_source,
                     })
                     .remove::<RigidBody>()
+                    .remove::<CompletingObjective>()
                     .insert(RigidBody::KinematicPositionBased);
 
                 return false;

@@ -38,7 +38,7 @@ impl Cluster {
         }
     }
 
-    pub fn get_chord_name(&self) -> Option<String> {
+    pub fn get_chord(&self) -> Option<(Note, &'static str)> {
         if self.notes.len() == 3 {
             let sorted_notes = self.notes.iter().map(|&x| x.0).sorted();
             let arr: [u8; 3] = sorted_notes.collect_vec().try_into().unwrap();
@@ -48,7 +48,7 @@ impl Cluster {
                 let chord_option = Chord3::all().get(&a1);
 
                 if let Some(chord) = chord_option {
-                    return Some(format!("{}{}", self.notes[i].get_name(), chord.nice_name()));
+                    return Some((self.notes[i], chord.nice_name()));
                 }
             }
         } else if self.notes.len() == 4 {
@@ -60,12 +60,19 @@ impl Cluster {
                 let chord_option = Chord4::all().get(&a1);
 
                 if let Some(chord) = chord_option {
-                    return Some(format!("{}{}", self.notes[i].get_name(), chord.nice_name()));
+                    return Some((self.notes[i], chord.nice_name()));
                 }
             }
         }
 
         return None;
+    }
+
+    pub fn get_chord_name(&self) -> Option<String> {
+        if let Some((root, chord)) = self.get_chord() {
+            return Some(format!("{}{}", root.get_name(), chord));
+        }
+        None
     }
 
     fn permute<const L: usize>(notes: [u8; L], index: usize) -> [u8; L] {

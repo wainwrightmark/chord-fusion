@@ -8,7 +8,8 @@ impl Plugin for EventsPlugin {
             .add_event::<DragMoveEvent>()
             .add_event::<DragEndEvent>()
             .add_event::<NewGameEvent>()
-            .add_event::<CombineEvent>();
+            .add_event::<CombineEvent>()
+            .add_event::<DragEndWithIntersection>();
     }
 }
 

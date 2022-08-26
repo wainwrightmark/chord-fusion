@@ -4,13 +4,13 @@ use bevy::render::once_cell::sync::OnceCell;
 
 use strum::{EnumIter, IntoEnumIterator};
 
-pub trait Chord<const L: usize>: Clone + Copy + PartialEq + Eq + Hash + Debug {
+pub trait NamedChord {
     fn short_name(&self) -> &'static str;
-
     fn nice_name(&self) -> &'static str;
+}
 
+pub trait Chord<const L: usize>: Clone + Copy + PartialEq + Eq + Hash + Debug + NamedChord {
     fn intervals(&self) -> [u8; L];
-
     fn all() -> &'static BTreeMap<[u8; L], Self>;
 }
 
@@ -40,7 +40,7 @@ pub enum Chord4 {
     Dominant11,
 }
 
-impl Chord<3> for Chord3 {
+impl NamedChord for Chord3 {
     fn short_name(&self) -> &'static str {
         match self {
             Self::Major => "M",
@@ -62,7 +62,9 @@ impl Chord<3> for Chord3 {
             Self::Suspended4 => "sus4",
         }
     }
+}
 
+impl Chord<3> for Chord3 {
     fn intervals(&self) -> [u8; 3] {
         match self {
             Chord3::Major => [0, 4, 7],
@@ -79,7 +81,7 @@ impl Chord<3> for Chord3 {
     }
 }
 
-impl Chord<4> for Chord4 {
+impl NamedChord for Chord4 {
     fn short_name(&self) -> &'static str {
         match self {
             Self::Dominant7 => "7",
@@ -107,7 +109,9 @@ impl Chord<4> for Chord4 {
             Self::Dominant11 => "11",
         }
     }
+}
 
+impl Chord<4> for Chord4 {
     fn intervals(&self) -> [u8; 4] {
         match self {
             Chord4::Dominant7 => [0, 4, 7, 10],
