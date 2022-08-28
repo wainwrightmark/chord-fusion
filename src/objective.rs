@@ -15,7 +15,8 @@ use crate::*;
 pub struct ObjectivePlugin;
 impl Plugin for ObjectivePlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(rotate_objectives)
+        app
+            //.add_system(rotate_objectives)
             //.add_startup_system(init_objectives)
             .add_system(
                 check_for_completions

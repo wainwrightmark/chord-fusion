@@ -190,42 +190,42 @@ impl GameLevel {
         match i {
             1 => GameLevel {
                 name: "Harmonious Materials",
-                header: "I",
+                header: "I.",
                 objectives: vec![Some(Chord::Major)],
                 notes: vec![Note::C, Note::E, Note::G],
             },
             2 => GameLevel {
-                header: "ii",
+                header: "ii.",
                 name: "Piano Down a Mine Shaft",
                 objectives: vec![Some(Chord::Minor)],
                 notes: vec![Note::AB, Note::B, Note::C, Note::EB],
             },
             3 => GameLevel {
-                header: "iii",
+                header: "iii.",
                 name: "Interval Training",
                 objectives: vec![Some(Chord::Major), Some(Chord::Major)],
                 notes: vec![Note::C, Note::C, Note::E, Note::G, Note::F, Note::A],
             },
             4 => GameLevel {
-                header: "IV",
+                header: "IV.",
                 name: "Invariant Ringlet",
                 objectives: vec![Some(Chord::Suspended4), Some(Chord::Minor)],
                 notes: vec![Note::C, Note::C, Note::E, Note::G, Note::F, Note::A],
             },
             5 => GameLevel {
-                header: "V",
+                header: "V.",
                 name: "Dissonant Constonants",
                 objectives: vec![Some(Chord::Diminished), Some(Chord::Diminished)],
-                notes: vec![Note::D, Note::B, Note::F, Note::DB, Note::GB, Note::E],
+                notes: vec![Note::D, Note::B, Note::F, Note::DB, Note::G, Note::E],
             },
             6 => GameLevel {
-                header: "vio",
+                header: "vi.",
                 name: "Auganized Chaos",
                 objectives: vec![Some(Chord::Augmented), Some(Chord::Augmented)],
                 notes: vec![Note::A, Note::B, Note::DB, Note::EB, Note::F, Note::G],
             },
             7 => GameLevel {
-                header: "VIIΔ",
+                header: "VII.",
                 name: "Try Tone Substitution",
                 objectives: vec![Some(Chord::Dominant7), Some(Chord::Dominant7)],
                 notes: vec![
@@ -241,7 +241,7 @@ impl GameLevel {
             },
 
             8 => GameLevel {
-                header: "VIII",
+                header: "VIII.",
                 name: "I'm too young to Diatonic",
                 objectives: vec![Some(Chord::Major7), Some(Chord::Minor7)],
                 notes: vec![
@@ -257,7 +257,7 @@ impl GameLevel {
             },
 
             9 => GameLevel {
-                header: "IX",
+                header: "IX.",
                 name: "Chromatic Tac Toe",
                 objectives: vec![None, None, None],
                 notes: (0..12).map(Note).collect_vec(),

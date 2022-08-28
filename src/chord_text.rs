@@ -41,6 +41,7 @@ fn change_chord_text(
 
     interacting_objectives: Query<(&Objective, &Interactable)>,
     interacting_changed_objectives: Query<&Objective, Changed<Interactable>>,
+    interacting_orbs: Query<(With<Orb>, &Interactable)>,
 ) {
     let new_text_option: Option<(String, String)> = if let Some(ev) = er.iter().last() {
         //info!("NPCE");
@@ -66,13 +67,20 @@ fn change_chord_text(
         } else {
             Some((cluster.get_notes_text(), "".to_string()))
         }
-    } else if !interacting_changed_objectives.is_empty() {
+    } else if !interacting_changed_objectives.is_empty()
+        && interacting_orbs
+            .iter()
+            .filter(|x| x.1.interacting)
+            .next()
+            .is_none()
+    {
         //info!("ICO");
         if let Some(obj) = interacting_objectives.iter().find(|x| x.1.interacting) {
             if let Some(chord) = obj.0.filter {
-                Some((chord.nice_name().to_string(), "".to_string()))
+                let intervals = chord.intervals().iter().map(|x| x.to_string()).join(" ");
+                Some((chord.nice_name().to_string(), intervals))
             } else {
-                Some(("".to_string(), "".to_string()))
+                Some(("any".to_string(), "any".to_string()))
             }
         } else {
             Some(("".to_string(), "".to_string()))
