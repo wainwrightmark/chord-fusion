@@ -35,6 +35,7 @@ fn setup_level_text(mut commands: Commands, asset_server: Res<AssetServer>) {
                 align_self: AlignSelf::Center,
                 position_type: PositionType::Absolute,
                 flex_grow: 0.,
+                flex_direction: FlexDirection::Column,
                 ..Default::default()
             },
             ..Default::default()
@@ -48,7 +49,17 @@ fn setup_level_text(mut commands: Commands, asset_server: Res<AssetServer>) {
                 })]) // Set the alignment of the Text
                 .with_text_alignment(TextAlignment::CENTER),
             )
-            .insert(LevelText {});
+            .insert(LevelText { is_header: false });
+
+            f.spawn_bundle(
+                TextBundle::from_sections([TextSection::from_style(TextStyle {
+                    font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                    font_size: 30.0,
+                    color: BIG_TEXT_COLOR,
+                })]) // Set the alignment of the Text
+                .with_text_alignment(TextAlignment::CENTER),
+            )
+            .insert(LevelText { is_header: true });
         });
 }
 fn check_for_completion(
@@ -81,8 +92,14 @@ fn start_next_level(
     current_level.0 += 1;
     let level = GameLevel::get_level(current_level.0);
 
-    for (entity, _, mut text) in level_text.iter_mut() {
-        text.sections[0].value = format!("{: ^36}", level.name);
+    for (entity, lt, mut text) in level_text.iter_mut() {
+        let new_text = if lt.is_header {
+            level.header
+        } else {
+            level.name
+        };
+
+        text.sections[0].value = format!("{: ^36}", new_text);
         commands.entity(entity).insert(Animator::new(Tween::new(
             EaseFunction::QuadraticInOut,
             TweeningType::Once,
@@ -117,12 +134,15 @@ fn start_next_level(
 }
 
 #[derive(Component)]
-pub struct LevelText {}
+pub struct LevelText {
+    is_header: bool,
+}
 
 #[derive(Default)]
 pub struct CurrentLevel(pub usize);
 
 pub struct GameLevel {
+    pub header: &'static str,
     pub name: &'static str,
     pub objectives: Vec<Option<Chord>>, //change this
     pub notes: Vec<Note>,
@@ -148,6 +168,8 @@ impl GameLevel {
             }
         }
 
+        let header = "";
+
         let name = match i % 5 {
             0 => "Levels are Random now",
             1 => "You can stop!",
@@ -160,6 +182,7 @@ impl GameLevel {
 
         GameLevel {
             name,
+            header,
             objectives,
             notes,
         }
@@ -169,35 +192,42 @@ impl GameLevel {
         match i {
             1 => GameLevel {
                 name: "Harmonious Materials",
+                header: "I",
                 objectives: vec![Some(Chord::Major)],
                 notes: vec![Note::C, Note::E, Note::G],
             },
             2 => GameLevel {
+                header: "ii",
                 name: "Piano Down a Mine Shaft",
                 objectives: vec![Some(Chord::Minor)],
                 notes: vec![Note::AB, Note::B, Note::C, Note::EB],
             },
             3 => GameLevel {
+                header: "iii",
                 name: "Interval Training",
                 objectives: vec![Some(Chord::Major), Some(Chord::Major)],
                 notes: vec![Note::C, Note::C, Note::E, Note::G, Note::F, Note::A],
             },
             4 => GameLevel {
+                header: "IV",
                 name: "Invariant Ringlet",
                 objectives: vec![Some(Chord::Suspended4), Some(Chord::Minor)],
                 notes: vec![Note::C, Note::C, Note::E, Note::G, Note::F, Note::A],
             },
             5 => GameLevel {
+                header: "V",
                 name: "Dissonant Constonants",
                 objectives: vec![Some(Chord::Diminished), Some(Chord::Diminished)],
                 notes: vec![Note::D, Note::B, Note::F, Note::DB, Note::GB, Note::E],
             },
             6 => GameLevel {
+                header: "vio",
                 name: "Auganized Chaos",
                 objectives: vec![Some(Chord::Augmented), Some(Chord::Augmented)],
                 notes: vec![Note::A, Note::B, Note::DB, Note::EB, Note::F, Note::G],
             },
             7 => GameLevel {
+                header: "VIIΔ",
                 name: "Try Tone Substitution",
                 objectives: vec![Some(Chord::Dominant7), Some(Chord::Dominant7)],
                 notes: vec![
@@ -213,6 +243,7 @@ impl GameLevel {
             },
 
             8 => GameLevel {
+                header: "VIII",
                 name: "I'm too young to Diatonic",
                 objectives: vec![Some(Chord::Major7), Some(Chord::Minor7)],
                 notes: vec![
@@ -228,6 +259,7 @@ impl GameLevel {
             },
 
             9 => GameLevel {
+                header: "IX",
                 name: "Chromatic Tac Toe",
                 objectives: vec![None, None, None],
                 notes: (0..12).map(|x| Note(x)).collect_vec(),
