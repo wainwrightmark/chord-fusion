@@ -54,7 +54,6 @@ use level::*;
 mod notes_playing;
 use notes_playing::*;
 
-
 pub mod prelude {}
 
 pub const CLEAR_COLOR: Color = Color::DARK_GRAY;
@@ -106,7 +105,6 @@ fn main() {
         .add_plugin(DeconstructPlugin)
         .add_plugin(ObjectivePlugin)
         .add_plugin(LevelPlugin)
-        
         .add_startup_system(setup.label("main_setup"))
         //.add_startup_system_to_stage(StartupStage::PostStartup, create_initial_orbs)
         .run();

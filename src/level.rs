@@ -3,7 +3,13 @@ use std::time::Duration;
 use bevy::prelude::*;
 use bevy_tweening::lens::*;
 use bevy_tweening::*;
+use itertools::Itertools;
+use rand::Rng;
 
+use rand::SeedableRng;
+use strum::EnumCount;
+
+use crate::chord::Chord;
 use crate::cluster::*;
 use crate::objective::*;
 use crate::*;
@@ -12,9 +18,10 @@ pub struct LevelPlugin;
 impl Plugin for LevelPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<CurrentLevel>()
-        .add_system_to_stage(
-            CoreStage::PostUpdate,
-                check_for_completion.after("update_met_objectives"))
+            .add_system_to_stage(
+                CoreStage::PostUpdate,
+                check_for_completion.after("update_met_objectives"),
+            )
             .add_startup_system(setup_level_text)
             .add_startup_system_to_stage(StartupStage::PostStartup, start_next_level);
     }
@@ -88,8 +95,8 @@ fn start_next_level(
         )));
     }
 
-    for i in 0..level.objectives {
-        create_objective(&mut commands, i, level.objectives);
+    for (i, objective) in level.objectives.iter().enumerate() {
+        create_objective(&mut commands, i, level.objectives.len(), objective.clone());
     }
 
     for n in level.notes {
@@ -117,64 +124,116 @@ pub struct CurrentLevel(pub usize);
 
 pub struct GameLevel {
     pub name: &'static str,
-    pub objectives: usize, //change this
+    pub objectives: Vec<Option<Chord>>, //change this
     pub notes: Vec<Note>,
 }
 
 impl GameLevel {
+    fn random_level(i: usize) -> GameLevel {
+        let mut rng: rand::rngs::StdRng = SeedableRng::seed_from_u64(i as u64);
+
+        let mut objectives = Vec::<Option<Chord>>::new();
+        let mut notes = Vec::<Note>::new();
+
+        for _ in 0..2 {
+            let chord_i = rng.gen_range(0..Chord::COUNT);
+            let root_i = rng.gen_range(0..12) as u8;
+
+            let chord = Chord::from_repr(chord_i).unwrap();
+            let root = Note(root_i);
+            objectives.push(Some(chord));
+            let chord_notes = chord.get_notes(root);
+            for n in chord_notes {
+                notes.push(n);
+            }
+        }
+
+        let name = match i % 5 {
+            0 => "Levels are Random now",
+            1 => "You can stop!",
+            2 => "No really, you can!",
+            3 => "Hey, you're getting good at this!",
+            4 => "Is it sight reading, or right seeding?",
+
+            _ => unimplemented!(),
+        };
+
+        GameLevel {
+            name,
+            objectives,
+            notes,
+        }
+    }
+
     pub fn get_level(i: usize) -> GameLevel {
-        match i % 8 {
-            0 => GameLevel {
-                name: "Octave",
-                objectives: 3,
-                notes: Note::ALL_NOTES.into(),
-            },
+        match i {
             1 => GameLevel {
-                name: "First Inversion",
-                objectives: 1,
-                notes: vec![Note(0), Note(4), Note(7)],
+                name: "Harmonious Materials",
+                objectives: vec![Some(Chord::Major)],
+                notes: vec![Note::C, Note::E, Note::G],
             },
             2 => GameLevel {
-                name: "Major Second",
-                objectives: 2,
-                notes: vec![Note(0), Note(4), Note(7), Note(1), Note(5), Note(8)],
+                name: "Piano Down a Mine Shaft",
+                objectives: vec![Some(Chord::Minor)],
+                notes: vec![Note::AB, Note::B, Note::C, Note::EB],
             },
             3 => GameLevel {
-                name: "Piano Down a Mine Shaft",
-                objectives: 1,
-                notes: vec![Note(8), Note(3), Note(11)],
+                name: "Interval Training",
+                objectives: vec![Some(Chord::Major), Some(Chord::Major)],
+                notes: vec![Note::C, Note::C, Note::E, Note::G, Note::F, Note::A],
             },
             4 => GameLevel {
-                name: "Too Young to Diatonic?",
-                objectives: 2,
-                notes: vec![Note(0), Note(2), Note(4), Note(5), Note(7), Note(11)],
+                name: "Invariant Ringlet",
+                objectives: vec![Some(Chord::Suspended4), Some(Chord::Minor)],
+                notes: vec![Note::C, Note::C, Note::E, Note::G, Note::F, Note::A],
             },
             5 => GameLevel {
-                name: "Diminished Fifth",
-                objectives: 2,
-                notes: vec![Note(0), Note(3), Note(6), Note(1), Note(4), Note(7)],
+                name: "Dissonant Constonants",
+                objectives: vec![Some(Chord::Diminished), Some(Chord::Diminished)],
+                notes: vec![Note::D, Note::B, Note::F, Note::DB, Note::GB, Note::E],
             },
             6 => GameLevel {
-                name: "Auganization",
-                objectives: 2,
-                notes: vec![Note(0), Note(4), Note(8), Note(1), Note(5), Note(9)],
+                name: "Auganized Chaos",
+                objectives: vec![Some(Chord::Augmented), Some(Chord::Augmented)],
+                notes: vec![Note::A, Note::B, Note::DB, Note::EB, Note::F, Note::G],
             },
             7 => GameLevel {
-                name: "Seventh Heaven",
-                objectives: 2,
+                name: "Try Tone Substitution",
+                objectives: vec![Some(Chord::Dominant7), Some(Chord::Dominant7)],
                 notes: vec![
-                    Note(0),
-                    Note(4),
-                    Note(7),
-                    Note(10),
-                    Note(1),
-                    Note(4),
-                    Note(7),
-                    Note(11),
+                    Note::A,
+                    Note::DB,
+                    Note::G,
+                    Note::E,
+                    Note::EB,
+                    Note::DB,
+                    Note::G,
+                    Note::BB,
                 ],
             },
 
-            _ => unimplemented!(),
+            8 => GameLevel {
+                name: "I'm too young to Diatonic",
+                objectives: vec![Some(Chord::Major7), Some(Chord::Minor7)],
+                notes: vec![
+                    Note::C,
+                    Note::C,
+                    Note::D,
+                    Note::E,
+                    Note::F,
+                    Note::G,
+                    Note::A,
+                    Note::B,
+                ],
+            },
+
+            9 => GameLevel {
+                name: "Chromatic Tac Toe",
+                objectives: vec![None, None, None],
+                notes: (0..12).map(|x| Note(x)).collect_vec(),
+            },
+
+            _ => Self::random_level(i),
         }
     }
 }

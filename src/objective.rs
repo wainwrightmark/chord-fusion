@@ -2,8 +2,8 @@ use bevy::prelude::*;
 use itertools::Itertools;
 use smallvec::ToSmallVec;
 
-use crate::cluster::*;
 use crate::chord::*;
+use crate::cluster::*;
 use crate::*;
 
 pub struct ObjectivePlugin;
@@ -18,7 +18,8 @@ impl Plugin for ObjectivePlugin {
             )
             .add_system_to_stage(
                 CoreStage::PostUpdate,
-                set_objective_colors.after("track_notes_playing_changes"))
+                set_objective_colors.after("track_notes_playing_changes"),
+            )
             .add_system_to_stage(
                 CoreStage::PostUpdate,
                 update_met_objectives.label("update_met_objectives"),
@@ -157,10 +158,9 @@ fn incomplete_excited_objective_draw_mode() -> DrawMode {
 
 pub fn create_objective(
     commands: &mut Commands,
-    //asset_server: &Res<AssetServer>,
     index: usize,
     total_number: usize,
-    //chord_name: &'static str,
+    _chord_option: Option<Chord>,
 ) {
     let position_x =
         (WINDOW_WIDTH * ((index + 1) as f32) / (total_number as f32 + 1.)) - (WINDOW_WIDTH * 0.5);

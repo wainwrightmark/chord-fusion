@@ -51,5 +51,7 @@ pub struct Wall {}
 
 #[derive(Component)]
 pub enum Shelf {
-    Left,Middle,Right
+    Left,
+    Middle,
+    Right,
 }

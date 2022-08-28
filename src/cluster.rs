@@ -1,5 +1,6 @@
 use std::fmt::Debug;
 
+
 use bevy::prelude::Color;
 use bevy_prototype_lyon::prelude::*;
 use itertools::Itertools;
@@ -130,10 +131,25 @@ const fn create_note(i: usize) -> Note {
     Note(i as u8)
 }
 
-impl std::fmt::Display for Note{
+impl std::fmt::Display for Note {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.get_name())
     }
+}
+
+impl Note {
+    pub const C: Self = Note(0);
+    pub const DB: Self = Note(1);
+    pub const D: Self = Note(2);
+    pub const EB: Self = Note(3);
+    pub const E: Self = Note(4);
+    pub const F: Self = Note(5);
+    pub const GB: Self = Note(6);
+    pub const G: Self = Note(7);
+    pub const AB: Self = Note(8);
+    pub const A: Self = Note(9);
+    pub const BB: Self = Note(10);
+    pub const B: Self = Note(11);
 }
 
 impl Note {
@@ -158,18 +174,34 @@ impl Note {
         }
     }
     pub fn get_name(self) -> &'static str {
+        // match self.0 % 12 {
+        //     0 => "C",
+        //     1 => "C#",
+        //     2 => "D",
+        //     3 => "D#",
+        //     4 => "E",
+        //     5 => "F",
+        //     6 => "F#",
+        //     7 => "G",
+        //     8 => "G#",
+        //     9 => "A",
+        //     10 => "A#",
+        //     11 => "B",
+        //     _ => unimplemented!(),
+        // }
+        
         match self.0 % 12 {
             0 => "C",
-            1 => "C#",
+            1 => "Db",
             2 => "D",
-            3 => "D#",
+            3 => "Eb",
             4 => "E",
             5 => "F",
-            6 => "F#",
+            6 => "Gb",
             7 => "G",
-            8 => "G#",
+            8 => "Ab",
             9 => "A",
-            10 => "A#",
+            10 => "Bb",
             11 => "B",
             _ => unimplemented!(),
         }

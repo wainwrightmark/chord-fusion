@@ -2,10 +2,13 @@ use std::{collections::BTreeMap, fmt::Debug, hash::Hash};
 
 use bevy::render::once_cell::sync::OnceCell;
 
-use strum::{EnumIter, IntoEnumIterator};
+use itertools::Itertools;
+use strum::{EnumCount, EnumIter, FromRepr, IntoEnumIterator};
 
-#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug, EnumIter)]
-pub enum Chord{
+use crate::cluster::Note;
+
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug, EnumIter, EnumCount, FromRepr)]
+pub enum Chord {
     Major,
     Minor,
     Diminished,
@@ -24,8 +27,17 @@ pub enum Chord{
     Dominant11,
 }
 
-impl Chord{
-    pub fn short_name(&self) -> &'static str{
+impl Chord {
+    pub fn get_notes(self, root: Note) -> Vec<Note> {
+        self.intervals()
+            .iter()
+            .map(|i| Note((root.0 + i) % 12))
+            .collect_vec()
+    }
+}
+
+impl Chord {
+    pub fn short_name(&self) -> &'static str {
         match self {
             Self::Major => "M",
             Self::Minor => "m",
@@ -45,7 +57,7 @@ impl Chord{
             Self::Dominant11 => "11",
         }
     }
-    pub fn nice_name(&self) -> &'static str{
+    pub fn nice_name(&self) -> &'static str {
         match self {
             Self::Major => "major",
             Self::Minor => "minor",
@@ -53,7 +65,7 @@ impl Chord{
             Self::Augmented => "aug",
             Self::Suspended2 => "sus2",
             Self::Suspended4 => "sus4",
-            
+
             Self::Dominant7 => "7",
             Self::Major7 => "major7",
             Self::Minor7 => "minor7",
@@ -64,10 +76,9 @@ impl Chord{
             Self::AugmentedMaj7 => "aug major7",
             Self::Dominant11 => "11",
         }
-
     }
-    pub fn intervals(&self) -> Vec<u8>{
-        match self{
+    pub fn intervals(&self) -> Vec<u8> {
+        match self {
             Self::Major => vec![0, 4, 7],
             Self::Minor => vec![0, 3, 7],
             Self::Diminished => vec![0, 3, 6],
@@ -86,13 +97,9 @@ impl Chord{
             Self::Dominant11 => vec![0, 5, 7, 10],
         }
     }
-    pub fn all() -> &'static BTreeMap<Vec<u8>, Self>
-    {
+    pub fn all() -> &'static BTreeMap<Vec<u8>, Self> {
         CHORDS.get_or_init(|| BTreeMap::from_iter(Chord::iter().map(|c| (c.intervals(), c))))
     }
 }
 
-
 static CHORDS: OnceCell<BTreeMap<Vec<u8>, Chord>> = OnceCell::new();
-
-
