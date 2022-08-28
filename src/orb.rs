@@ -145,5 +145,6 @@ pub fn create_orb(
 
     entity_builder.insert(crate::Orb { cluster });
 
+    entity_builder.insert(crate::Interactable { interacting: false });
     entity_builder.insert(crate::Draggable {});
 }

@@ -18,15 +18,17 @@ pub struct Orb {
 }
 
 #[derive(Component)]
+pub struct Interactable {
+    pub interacting: bool,
+}
+
+#[derive(Component)]
 pub struct NoteCircle {
     pub note: Note,
 }
 
 #[derive(Component)]
 pub struct Deconstructor {}
-
-#[derive(Component)]
-pub struct PlayingSound {}
 
 #[derive(Component)]
 pub struct Draggable {}

@@ -1,6 +1,5 @@
 use std::fmt::Debug;
 
-
 use bevy::prelude::Color;
 use bevy_prototype_lyon::prelude::*;
 use itertools::Itertools;
@@ -189,7 +188,7 @@ impl Note {
         //     11 => "B",
         //     _ => unimplemented!(),
         // }
-        
+
         match self.0 % 12 {
             0 => "C",
             1 => "Db",

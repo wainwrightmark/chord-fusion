@@ -1,4 +1,4 @@
-use bevy::{prelude::*, utils::HashMap};
+use bevy::{prelude::*, utils::HashSet};
 
 use crate::*;
 
@@ -10,36 +10,38 @@ impl Plugin for HoverPlugin {
 }
 
 pub fn detect_hover(
-    mut commands: Commands,
     mut cursor_evr: EventReader<CursorMoved>,
     // need to get window dimensions
     windows: Res<Windows>,
     // query to get camera transform
     q_camera: Query<(&Camera, &GlobalTransform), With<MainCamera>>,
     rapier_context: Res<RapierContext>,
-    orbs: Query<(Entity, Option<&PlayingSound>), With<Orb>>,
-    current_sounds: Query<(Entity, Option<&Dragged>), With<PlayingSound>>,
+    mut interactables: Query<(Entity, (&mut Interactable, Option<&Dragged>))>,
 ) {
     if let Some(_ev) = cursor_evr.iter().last() {
-        let mut c_sounds: HashMap<Entity, Option<&Dragged>> = current_sounds.into_iter().collect();
+        let mut remaining: HashSet<Entity> = interactables
+            .iter()
+            .filter(|x| x.1 .0.interacting && x.1 .1.is_none())
+            .map(|(e, _)| e)
+            .collect();
 
         if let Some(position) = get_cursor_position(windows, q_camera) {
             rapier_context.intersections_with_point(position, default(), |entity| {
-                if let Ok((e, playing)) = orbs.get(entity) {
-                    if playing.is_none() {
-                        commands.entity(e).insert(PlayingSound {});
-                    } else {
+                if let Ok((e, (mut interactable, _))) = interactables.get_mut(entity) {
+                    if interactable.interacting {
                         //This sound is playing - do not stop it
-                        c_sounds.remove(&e);
+                        remaining.remove(&e);
+                    } else {
+                        interactable.interacting = true;
                     }
                 }
                 true
             });
         }
 
-        for (e, dragged) in c_sounds {
-            if dragged.is_none() {
-                commands.entity(e).remove::<PlayingSound>(); //Don't stop the sound if the entity is being dragged
+        for remaining in remaining {
+            if let Ok((_, (mut interactable, _))) = interactables.get_mut(remaining) {
+                interactable.interacting = false;
             }
         }
     }

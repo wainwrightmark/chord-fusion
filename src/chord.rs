@@ -27,7 +27,7 @@ pub enum Chord {
     Dominant11,
 }
 
-impl  std::fmt::Display for Chord {
+impl std::fmt::Display for Chord {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.nice_name())
     }

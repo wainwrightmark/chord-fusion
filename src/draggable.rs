@@ -74,12 +74,10 @@ fn drag_end(
 }
 
 fn drag_move(
-    mut commands: Commands,
-
     mut er_drag_move: EventReader<DragMoveEvent>,
     mut dragged_entities: Query<(Entity, &Dragged, &mut Transform)>,
     rapier_context: Res<RapierContext>,
-    undragged_players: Query<(Entity, With<PlayingSound>, Without<Dragged>)>,
+    mut interactables: Query<(Entity, &mut Interactable, Option<&Dragged>)>,
 ) {
     for event in er_drag_move.iter() {
         if let Some((entity, dragged, mut rb)) = dragged_entities
@@ -102,8 +100,11 @@ fn drag_move(
 
             rb.translation = new_position;
 
-            let mut remaining_undragged_players: HashSet<_> =
-                undragged_players.iter().map(|(e, _, _)| e).collect();
+            let mut remaining_undragged_actors: HashSet<_> = interactables
+                .iter_mut()
+                .filter(|x| x.1.interacting && x.2.is_none())
+                .map(|(e, _, _)| e)
+                .collect();
 
             let all_contacts = rapier_context
                 .contacts_with(entity)
@@ -115,15 +116,19 @@ fn drag_move(
 
             for c_entity in all_contacts {
                 if c_entity != entity {
-                    if !remaining_undragged_players.remove(&c_entity) {
-                        //this entity was not previously playing sound
-                        commands.entity(c_entity).insert(PlayingSound {});
+                    if !remaining_undragged_actors.remove(&c_entity) {
+                        //this entity was not previously interacting
+                        if let Ok((_, mut interactable, _)) = interactables.get_mut(c_entity) {
+                            interactable.interacting = true;
+                        }
                     }
                 }
             }
-            for rem in remaining_undragged_players {
+            for rem in remaining_undragged_actors {
                 //This entity is not in contact but is playing sound, remove the thingy
-                commands.entity(rem).remove::<PlayingSound>();
+                if let Ok((_, mut interactable, _)) = interactables.get_mut(rem) {
+                    interactable.interacting = false;
+                }
             }
         }
     }

@@ -20,7 +20,7 @@ impl Plugin for LevelPlugin {
         app.init_resource::<CurrentLevel>()
             .add_system_to_stage(
                 CoreStage::PreUpdate,
-                check_for_completion//.after("update_met_objectives"),
+                check_for_completion, //.after("update_met_objectives"),
             )
             .add_startup_system(setup_level_text)
             .add_startup_system_to_stage(StartupStage::PostStartup, start_next_level);

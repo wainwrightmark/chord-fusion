@@ -15,15 +15,15 @@ impl Plugin for NotesPlayingPlugin {
 }
 
 pub fn track_notes_playing_changes(
-    playing_orbs: Query<(Entity, &Orb, &PlayingSound)>,
-    removals: RemovedComponents<PlayingSound>,
-    additions: Query<&PlayingSound, Added<PlayingSound>>,
+    all_orbs: Query<(&Orb, &Interactable)>,
+    changed_interactables: Query<Changed<Interactable>>,
     mut ew: EventWriter<NotesPlayingChangedEvent>,
 ) {
-    if removals.iter().next().is_some() || additions.iter().next().is_some() {
-        let notes = playing_orbs
+    if !changed_interactables.is_empty() {
+        let notes = all_orbs
             .iter()
-            .flat_map(|x| x.1.cluster.notes.clone())
+            .filter(|x| x.1.interacting)
+            .flat_map(|x| x.0.cluster.notes.clone())
             .collect_vec();
 
         ew.send(NotesPlayingChangedEvent { notes })

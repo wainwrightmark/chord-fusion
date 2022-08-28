@@ -33,6 +33,7 @@ impl Plugin for ObjectivePlugin {
 pub struct Objective {
     pub filter: Option<Chord>,
     pub is_complete: bool,
+    pub is_hovered: bool,
 }
 
 #[derive(Component)]
@@ -94,12 +95,12 @@ fn check_for_completions(
         if let Ok((mut objective, mut draw_mode)) = objectives.get_mut(event.target) {
             if !objective.is_complete {
                 if let Ok(orb) = orbs.get(event.dragged) {
-                    info!("Checking Orb");
+                    //info!("Checking Orb");
                     if let Some((_, chord)) = orb.cluster.get_chord() {
-                        info!("Orb has chord {}", chord);
+                        //info!("Orb has chord {}", chord);
 
                         let meets_filter = if let Some(filter) = objective.filter {
-                            info!("Objective has filter {}", filter);
+                            //info!("Objective has filter {}", filter);
                             chord == filter
                         } else {
                             true
@@ -206,6 +207,7 @@ pub fn create_objective(
     entity_builder.insert(crate::Objective {
         filter: chord_option,
         is_complete: false,
+        is_hovered: false,
     });
 
     if let Some(chord) = chord_option {
