@@ -124,8 +124,7 @@ fn start_all_sounds(
             .get_handle(audio.play_with_settings(dsp_assets.graph(&sound9), settings.clone())),
         audio_sinks
             .get_handle(audio.play_with_settings(dsp_assets.graph(&sound10), settings.clone())),
-        audio_sinks
-            .get_handle(audio.play_with_settings(dsp_assets.graph(&sound11), settings)),
+        audio_sinks.get_handle(audio.play_with_settings(dsp_assets.graph(&sound11), settings)),
     ];
 
     note_handles.handles = Some(handles);
