@@ -16,7 +16,7 @@ impl Plugin for NotesPlayingPlugin {
 
 pub fn track_notes_playing_changes(
     all_orbs: Query<(&Orb, &Interactable)>,
-    changed_interactables: Query<Changed<Interactable>>,
+    changed_interactables: Query<(&Interactable, &Orb), Changed<Interactable>> ,
     mut ew: EventWriter<NotesPlayingChangedEvent>,
 ) {
     if !changed_interactables.is_empty() {
@@ -26,6 +26,7 @@ pub fn track_notes_playing_changes(
             .flat_map(|x| x.0.cluster.notes.clone())
             .collect_vec();
 
+            //info!("Notes playing changed");
         ew.send(NotesPlayingChangedEvent { notes })
     }
 }

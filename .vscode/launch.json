@@ -1,0 +1,45 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'chord-fusion'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=chord-fusion",
+                    "--package=chord-fusion"
+                ],
+                "filter": {
+                    "name": "chord-fusion",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'chord-fusion'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=chord-fusion",
+                    "--package=chord-fusion"
+                ],
+                "filter": {
+                    "name": "chord-fusion",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}

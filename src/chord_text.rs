@@ -3,7 +3,9 @@ use bevy_prototype_lyon::prelude::*;
 use itertools::Itertools;
 use smallvec::ToSmallVec;
 
-use crate::{cluster::*, components::*, events::*, BIG_TEXT_COLOR, SMALL_TEXT_COLOR};
+use crate::{
+    cluster::*, components::*, events::*, objective::Objective, BIG_TEXT_COLOR, SMALL_TEXT_COLOR,
+};
 
 pub struct ChordTextPlugin;
 
@@ -36,8 +38,12 @@ pub fn set_drawmode_for_orbs(
 fn change_chord_text(
     mut er: EventReader<NotesPlayingChangedEvent>,
     mut text_query: Query<(&ChordTextComponent, &mut Text)>,
+
+    interacting_objectives: Query<(&Objective, &Interactable)>,
+    interacting_changed_objectives: Query<&Objective, Changed<Interactable>>,
 ) {
-    if let Some(ev) = er.iter().last() {
+    let new_text_option: Option<(String, String)> = if let Some(ev) = er.iter().last() {
+        //info!("NPCE");
         //something has changed. Reset chord text
         let notes = ev
             .notes
@@ -50,16 +56,39 @@ fn change_chord_text(
 
         let cluster = Cluster { notes };
 
-        for (_, mut text) in text_query.iter_mut() {
-            let chord_option = cluster.get_chord();
+        let chord_option = cluster.get_chord();
 
-            if let Some((root, chord)) = chord_option {
-                text.sections[0].value = format!("{} {}", root.get_name(), chord.nice_name());
-                text.sections[1].value = cluster.get_notes_text();
+        if let Some((root, chord)) = chord_option {
+            Some((
+                format!("{} {}", root.get_name(), chord.nice_name()),
+                cluster.get_notes_text(),
+            ))
+        } else {
+            Some((cluster.get_notes_text(), "".to_string()))
+        }
+    } else if !interacting_changed_objectives.is_empty() {
+        //info!("ICO");
+        if let Some(obj) = interacting_objectives
+            .iter()
+            .filter(|x| x.1.interacting)
+            .next()
+        {
+            if let Some(chord) = obj.0.filter {
+                Some((chord.nice_name().to_string(), "".to_string()))
             } else {
-                text.sections[0].value = cluster.get_notes_text();
-                text.sections[1].value = "".to_string();
+                Some(("".to_string(), "".to_string()))
             }
+        } else {
+            Some(("".to_string(), "".to_string()))
+        }
+    } else {
+        None
+    };
+
+    if let Some(new_text) = new_text_option {
+        for (_, mut text) in text_query.iter_mut() {
+            text.sections[0].value = new_text.0.clone();
+            text.sections[1].value = new_text.1.clone();
         }
     }
 }

@@ -1,6 +1,10 @@
 use std::f32::consts::TAU;
+use std::time::Duration;
 
 use bevy::prelude::*;
+use bevy_tweening::*;
+use bevy_tweening::Tween;
+use bevy_tweening::lens::TransformRotateZLens;
 use itertools::Itertools;
 use smallvec::ToSmallVec;
 
@@ -12,6 +16,7 @@ pub struct ObjectivePlugin;
 impl Plugin for ObjectivePlugin {
     fn build(&self, app: &mut App) {
         app
+        .add_system(rotate_objectives)
             //.add_startup_system(init_objectives)
             .add_system(
                 check_for_completions
@@ -40,6 +45,34 @@ pub struct Objective {
 pub struct CompletingObjective {
     pub objective: Entity,
 }
+
+fn rotate_objectives(
+    mut commands: Commands,
+    objectives: Query<(Entity, &Objective, &Interactable, &Transform), Changed<Interactable>>
+){
+    for (e, _, i, t) in objectives.iter(){
+        if i.interacting{
+
+
+            //info!("Start rot: {}", t.rotation);
+            let animator = Animator::new(
+                Tween::new(
+                    EaseFunction::SineIn,
+                    TweeningType::Loop,
+                    Duration::from_secs(ANIMATION_SECONDS * 20),
+                    TransformRotateZLens{
+                        start: t.rotation.to_axis_angle().0.z,
+                        end: t.rotation.to_axis_angle().0.z + (TAU * 2.0)
+                    },
+                )
+            );
+
+            commands.entity(e).insert(animator);
+        }
+        else {
+            commands.entity(e).remove::<Animator<Transform>>();
+    }
+}}
 
 fn set_objective_colors(
     mut er: EventReader<NotesPlayingChangedEvent>,
@@ -107,7 +140,7 @@ fn check_for_completions(
                         };
 
                         if meets_filter {
-                            info!("Filter met");
+                            //info!("Filter met");
                             objective.is_complete = true;
                             *draw_mode = complete_objective_draw_mode();
                             commands
@@ -209,6 +242,8 @@ pub fn create_objective(
         is_complete: false,
         is_hovered: false,
     });
+
+    entity_builder.insert(Interactable{interacting: false});
 
     if let Some(chord) = chord_option {
         let num_children = chord.intervals().len();

@@ -16,7 +16,7 @@ impl Plugin for SoundPlugin {
             .add_system_to_stage(
                 CoreStage::PostUpdate,
                 set_sounds
-                    .label("stop_sounds")
+                    .label("set_sounds")
                     .after("track_notes_playing_changes"),
             );
     }
@@ -154,8 +154,9 @@ fn set_sounds(
 
                 let handle = &handles[n.0 as usize];
 
-                let sink = audio_sinks.get(handle).unwrap();
-                sink.set_volume(vol);
+                if let Some(sink) = audio_sinks.get(handle) {
+                    sink.set_volume(vol);
+                }
             }
         }
     }

@@ -119,6 +119,7 @@ fn drag_move(
                     if !remaining_undragged_actors.remove(&c_entity) {
                         //this entity was not previously interacting
                         if let Ok((_, mut interactable, _)) = interactables.get_mut(c_entity) {
+                            //info!("draggable interacting");
                             interactable.interacting = true;
                         }
                     }
@@ -127,6 +128,7 @@ fn drag_move(
             for rem in remaining_undragged_actors {
                 //This entity is not in contact but is playing sound, remove the thingy
                 if let Ok((_, mut interactable, _)) = interactables.get_mut(rem) {
+                    //info!("draggable no longer interacting");
                     interactable.interacting = false;
                 }
             }

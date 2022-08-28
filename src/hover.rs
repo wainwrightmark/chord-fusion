@@ -32,6 +32,7 @@ pub fn detect_hover(
                         //This sound is playing - do not stop it
                         remaining.remove(&e);
                     } else {
+                        //info!("Interacting");
                         interactable.interacting = true;
                     }
                 }
@@ -41,6 +42,7 @@ pub fn detect_hover(
 
         for remaining in remaining {
             if let Ok((_, (mut interactable, _))) = interactables.get_mut(remaining) {
+                //info!("No longer Interacting");
                 interactable.interacting = false;
             }
         }
