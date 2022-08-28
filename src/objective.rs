@@ -92,25 +92,28 @@ fn check_for_completions(
         if let Ok((mut objective, mut draw_mode)) = objectives.get_mut(event.target) {
             if !objective.is_complete {
                 if let Ok(orb) = orbs.get(event.dragged) {
-                    let meets_filter = if let Some(filter) = objective.filter {
-                        if let Some((_, chord_name)) = orb.cluster.get_chord() {
-                            chord_name == filter
-                        } else {
-                            false
-                        }
-                    } else {
-                        orb.cluster.get_chord().is_some()
-                    };
+                    info!("Checking Orb");
+                    if let Some((_, chord)) = orb.cluster.get_chord() {
+                        info!("Orb has chord {}", chord);
 
-                    if meets_filter {
-                        objective.is_complete = true;
-                        *draw_mode = complete_objective_draw_mode();
-                        commands
-                            .entity(event.dragged)
-                            .insert(CompletingObjective {
-                                objective: event.target,
-                            })
-                            .insert(RigidBody::Fixed);
+                        let meets_filter = if let Some(filter) = objective.filter {
+                            info!("Objective has filter {}", filter);
+                            chord == filter
+                        } else {
+                            true
+                        };
+
+                        if meets_filter {
+                            info!("Filter met");
+                            objective.is_complete = true;
+                            *draw_mode = complete_objective_draw_mode();
+                            commands
+                                .entity(event.dragged)
+                                .insert(CompletingObjective {
+                                    objective: event.target,
+                                })
+                                .insert(RigidBody::Fixed);
+                        }
                     }
                 }
             }
@@ -160,7 +163,7 @@ pub fn create_objective(
     commands: &mut Commands,
     index: usize,
     total_number: usize,
-    _chord_option: Option<Chord>,
+    chord_option: Option<Chord>,
 ) {
     let position_x =
         (WINDOW_WIDTH * ((index + 1) as f32) / (total_number as f32 + 1.)) - (WINDOW_WIDTH * 0.5);
@@ -199,7 +202,7 @@ pub fn create_objective(
         .insert(transform);
 
     entity_builder.insert(crate::Objective {
-        filter: None,
+        filter: chord_option,
         is_complete: false,
     });
 }

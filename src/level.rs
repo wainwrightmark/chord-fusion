@@ -19,8 +19,8 @@ impl Plugin for LevelPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<CurrentLevel>()
             .add_system_to_stage(
-                CoreStage::PostUpdate,
-                check_for_completion.after("update_met_objectives"),
+                CoreStage::PreUpdate,
+                check_for_completion//.after("update_met_objectives"),
             )
             .add_startup_system(setup_level_text)
             .add_startup_system_to_stage(StartupStage::PostStartup, start_next_level);
@@ -94,12 +94,12 @@ fn start_next_level(
 
     for (entity, lt, mut text) in level_text.iter_mut() {
         let new_text = if lt.is_header {
-            level.header
+            format!("{: ^60}", level.header)
         } else {
-            level.name
+            format!("{: ^36}", level.name)
         };
 
-        text.sections[0].value = format!("{: ^36}", new_text);
+        text.sections[0].value = new_text;
         commands.entity(entity).insert(Animator::new(Tween::new(
             EaseFunction::QuadraticInOut,
             TweeningType::Once,

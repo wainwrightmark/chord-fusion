@@ -27,6 +27,12 @@ pub enum Chord {
     Dominant11,
 }
 
+impl  std::fmt::Display for Chord {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.nice_name())
+    }
+}
+
 impl Chord {
     pub fn get_notes(self, root: Note) -> Vec<Note> {
         self.intervals()
