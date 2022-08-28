@@ -1,3 +1,5 @@
+use std::f32::consts::TAU;
+
 use bevy::prelude::*;
 use itertools::Itertools;
 use smallvec::ToSmallVec;
@@ -205,4 +207,45 @@ pub fn create_objective(
         filter: chord_option,
         is_complete: false,
     });
+
+    if let Some(chord) = chord_option {
+        let num_children = chord.intervals().len();
+        let child_scale = 0.9 / (num_children as f32);
+        let child_distance = if num_children <= 1 {
+            Vec2::ZERO
+        } else {
+            Vec2 {
+                x: 0.,
+                y: SHAPE_SIZE * 0.25,
+            }
+        };
+        let child_scale_vec = Vec3 {
+            x: child_scale,
+            y: child_scale,
+            z: 1.,
+        };
+
+        for &interval in chord.intervals().iter() {
+            let child_angle = (TAU * (interval as f32)) / 12.;
+
+            let child_translation = child_distance
+                .rotate(Vec2::from_angle(child_angle))
+                .extend(5.);
+
+            {
+                entity_builder.with_children(|f| {
+                    f.spawn_bundle(GeometryBuilder::build_as(
+                        &shapes::Circle {
+                            center: Vec2::ZERO,
+                            radius: SHAPE_SIZE * 0.5,
+                        },
+                        bevy_prototype_lyon::prelude::DrawMode::Fill(
+                            bevy_prototype_lyon::draw::FillMode::color(CHORD_COLOR),
+                        ),
+                        Transform::from_translation(child_translation).with_scale(child_scale_vec),
+                    ));
+                });
+            }
+        }
+    }
 }
