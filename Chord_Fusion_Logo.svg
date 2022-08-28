@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04, custom)"
+   sodipodi:docname="Chord_Fusion_Logo.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <title
+     id="title24047">Chord Fusion Logo</title>
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="2.0737236"
+     inkscape:cx="217.48318"
+     inkscape:cy="365.52606"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2">
+    <rect
+       x="152.76088"
+       y="321.889"
+       width="428.27604"
+       height="156.85269"
+       id="rect2475" />
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter22209"
+       x="-0.042052267"
+       y="-0.088019647"
+       width="1.1168725"
+       height="1.244626">
+      <feFlood
+         flood-opacity="0.498039"
+         flood-color="rgb(0,0,0)"
+         result="flood"
+         id="feFlood22199" />
+      <feComposite
+         in="flood"
+         in2="SourceGraphic"
+         operator="in"
+         result="composite1"
+         id="feComposite22201" />
+      <feGaussianBlur
+         in="composite1"
+         stdDeviation="3"
+         result="blur"
+         id="feGaussianBlur22203" />
+      <feOffset
+         dx="6"
+         dy="6"
+         result="offset"
+         id="feOffset22205" />
+      <feComposite
+         in="SourceGraphic"
+         in2="offset"
+         operator="over"
+         result="composite2"
+         id="feComposite22207" />
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Electrize"
+       id="filter23725"
+       x="-0.73207174"
+       y="-0.82227293"
+       width="2.4641435"
+       height="2.6445459">
+      <feGaussianBlur
+         stdDeviation="0.488563"
+         result="blur"
+         id="feGaussianBlur23715" />
+      <feComponentTransfer
+         in="blur"
+         result="component"
+         id="feComponentTransfer23723">
+        <feFuncR
+           type="table"
+           tableValues="0 1 0 1 0 1 0"
+           id="feFuncR23717" />
+        <feFuncG
+           type="table"
+           tableValues="0 1 0 1 0 1 0"
+           id="feFuncG23719" />
+        <feFuncB
+           type="table"
+           tableValues="0 1 0 1 0 1 0"
+           id="feFuncB23721" />
+      </feComponentTransfer>
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Electrize"
+       id="filter23737"
+       x="-0.73207174"
+       y="-0.82227293"
+       width="2.4641435"
+       height="2.6445459">
+      <feGaussianBlur
+         stdDeviation="0.488563"
+         result="blur"
+         id="feGaussianBlur23727" />
+      <feComponentTransfer
+         in="blur"
+         result="component"
+         id="feComponentTransfer23735">
+        <feFuncR
+           type="table"
+           tableValues="0 1 0 1 0 1 0"
+           id="feFuncR23729" />
+        <feFuncG
+           type="table"
+           tableValues="0 1 0 1 0 1 0"
+           id="feFuncG23731" />
+        <feFuncB
+           type="table"
+           tableValues="0 1 0 1 0 1 0"
+           id="feFuncB23733" />
+      </feComponentTransfer>
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Electrize"
+       id="filter23749"
+       x="-0.73207174"
+       y="-0.82227293"
+       width="2.4641435"
+       height="2.6445459">
+      <feGaussianBlur
+         stdDeviation="0.488563"
+         result="blur"
+         id="feGaussianBlur23739" />
+      <feComponentTransfer
+         in="blur"
+         result="component"
+         id="feComponentTransfer23747">
+        <feFuncR
+           type="table"
+           tableValues="0 1 0 1 0 1 0"
+           id="feFuncR23741" />
+        <feFuncG
+           type="table"
+           tableValues="0 1 0 1 0 1 0"
+           id="feFuncG23743" />
+        <feFuncB
+           type="table"
+           tableValues="0 1 0 1 0 1 0"
+           id="feFuncB23745" />
+      </feComponentTransfer>
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Electrize"
+       id="filter23761"
+       x="-0.73207174"
+       y="-0.82227293"
+       width="2.4641435"
+       height="2.6445459">
+      <feGaussianBlur
+         stdDeviation="0.488563"
+         result="blur"
+         id="feGaussianBlur23751" />
+      <feComponentTransfer
+         in="blur"
+         result="component"
+         id="feComponentTransfer23759">
+        <feFuncR
+           type="table"
+           tableValues="0 1 0 1 0 1 0"
+           id="feFuncR23753" />
+        <feFuncG
+           type="table"
+           tableValues="0 1 0 1 0 1 0"
+           id="feFuncG23755" />
+        <feFuncB
+           type="table"
+           tableValues="0 1 0 1 0 1 0"
+           id="feFuncB23757" />
+      </feComponentTransfer>
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Electrize"
+       id="filter23773"
+       x="-0.73207174"
+       y="-0.82227293"
+       width="2.4641435"
+       height="2.6445459">
+      <feGaussianBlur
+         stdDeviation="0.488563"
+         result="blur"
+         id="feGaussianBlur23763" />
+      <feComponentTransfer
+         in="blur"
+         result="component"
+         id="feComponentTransfer23771">
+        <feFuncR
+           type="table"
+           tableValues="0 1 0 1 0 1 0"
+           id="feFuncR23765" />
+        <feFuncG
+           type="table"
+           tableValues="0 1 0 1 0 1 0"
+           id="feFuncG23767" />
+        <feFuncB
+           type="table"
+           tableValues="0 1 0 1 0 1 0"
+           id="feFuncB23769" />
+      </feComponentTransfer>
+    </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Electrize"
+       id="filter23785"
+       x="-0.73207174"
+       y="-0.82227293"
+       width="2.4641435"
+       height="2.6445459">
+      <feGaussianBlur
+         stdDeviation="0.488563"
+         result="blur"
+         id="feGaussianBlur23775" />
+      <feComponentTransfer
+         in="blur"
+         result="component"
+         id="feComponentTransfer23783">
+        <feFuncR
+           type="table"
+           tableValues="0 1 0 1 0 1 0"
+           id="feFuncR23777" />
+        <feFuncG
+           type="table"
+           tableValues="0 1 0 1 0 1 0"
+           id="feFuncG23779" />
+        <feFuncB
+           type="table"
+           tableValues="0 1 0 1 0 1 0"
+           id="feFuncB23781" />
+      </feComponentTransfer>
+    </filter>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <text
+       xml:space="preserve"
+       transform="scale(0.26458333)"
+       id="text2473"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:Ravie;white-space:pre;shape-inside:url(#rect2475);fill:#000080;fill-opacity:1;stroke:#000000;-inkscape-font-specification:'Ravie, Normal';font-stretch:normal;font-variant:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;filter:url(#filter22209)"><tspan
+         x="152.76172"
+         y="358.88086"
+         id="tspan24103">CHORD
+</tspan><tspan
+         x="152.76172"
+         y="408.88086"
+         id="tspan24105">FUSION</tspan></text>
+    <ellipse
+       style="fill:#ff00ff;stroke:#000000;stroke-width:0.0632167;filter:url(#filter23737)"
+       id="path21047"
+       cx="65.137909"
+       cy="85.797997"
+       rx="0.82243276"
+       ry="0.73221403" />
+    <ellipse
+       style="fill:#00ffff;stroke:#000000;stroke-width:0.0632167;filter:url(#filter23725)"
+       id="path21047-1"
+       cx="65.74334"
+       cy="96.088882"
+       rx="0.82243276"
+       ry="0.73221403" />
+    <ellipse
+       style="fill:#ffff00;stroke:#000000;stroke-width:0.0632167;filter:url(#filter23749)"
+       id="path21047-1-8"
+       cx="59.54435"
+       cy="96.714462"
+       rx="0.82243276"
+       ry="0.73221403" />
+  </g>
+  <metadata
+     id="metadata24045">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>Chord Fusion Logo</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+</svg>
