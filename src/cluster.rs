@@ -38,17 +38,17 @@ impl Cluster {
         }
     }
 
-    pub fn get_chord(&self) -> Option<(Note, &'static str)> {
+    pub fn get_chord(&self) -> Option<(Note, Chord)> {
         if self.notes.len() == 3 {
             let sorted_notes = self.notes.iter().map(|&x| x.0).sorted();
             let arr: [u8; 3] = sorted_notes.collect_vec().try_into().unwrap();
 
             for i in 0..3 {
-                let a1 = Self::permute(arr, i);
-                let chord_option = Chord3::all().get(&a1);
+                let a1 = Self::permute(arr, i).to_vec();
+                let chord_option = Chord::all().get(&a1);
 
                 if let Some(chord) = chord_option {
-                    return Some((self.notes[i], chord.nice_name()));
+                    return Some((self.notes[i], chord.clone()));
                 }
             }
         } else if self.notes.len() == 4 {
@@ -56,11 +56,11 @@ impl Cluster {
             let arr: [u8; 4] = sorted_notes.collect_vec().try_into().unwrap();
 
             for i in 0..4 {
-                let a1 = Self::permute(arr, i);
-                let chord_option = Chord4::all().get(&a1);
+                let a1 = Self::permute(arr, i).to_vec();
+                let chord_option = Chord::all().get(&a1);
 
                 if let Some(chord) = chord_option {
-                    return Some((self.notes[i], chord.nice_name()));
+                    return Some((self.notes[i], chord.clone()));
                 }
             }
         }
@@ -68,12 +68,12 @@ impl Cluster {
         return None;
     }
 
-    pub fn get_chord_name(&self) -> Option<String> {
-        if let Some((root, chord)) = self.get_chord() {
-            return Some(format!("{}{}", root.get_name(), chord));
-        }
-        None
-    }
+    // pub fn get_chord_name(&self) -> Option<String> {
+    //     if let Some((root, chord)) = self.get_chord() {
+    //         return Some(format!("{}{}", root.get_name(), chord));
+    //     }
+    //     None
+    // }
 
     fn permute<const L: usize>(notes: [u8; L], index: usize) -> [u8; L] {
         let mut new_notes = notes.clone();
@@ -128,6 +128,12 @@ pub struct Note(pub u8);
 
 const fn create_note(i: usize) -> Note {
     Note(i as u8)
+}
+
+impl std::fmt::Display for Note{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.get_name())
+    }
 }
 
 impl Note {

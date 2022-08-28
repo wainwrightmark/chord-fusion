@@ -12,7 +12,8 @@ impl Plugin for ChordTextPlugin {
         app.add_startup_system(setup)
             .add_system_to_stage(CoreStage::PostUpdate, set_drawmode_for_playing)
             .add_system_to_stage(CoreStage::PostUpdate, set_drawmode_for_stopped_playing)
-            .add_system(change_chord_text.after("track_notes_playing_changes"));
+            .add_system_to_stage(
+                CoreStage::PostUpdate,change_chord_text.after("track_notes_playing_changes"));
     }
 }
 
@@ -54,10 +55,10 @@ fn change_chord_text(
         let cluster = Cluster { notes };
 
         for (_, mut text) in text_query.iter_mut() {
-            let chord_name_option = cluster.get_chord_name();
+            let chord_option = cluster.get_chord();
 
-            if let Some(chord_name) = chord_name_option {
-                text.sections[0].value = chord_name; // format!("{: >10}", chord_name) ;
+            if let Some((root, chord)) = chord_option {
+                text.sections[0].value = format!("{} {}", root.get_name(), chord.nice_name()) ;
                 text.sections[1].value = cluster.get_notes_text();
             } else {
                 text.sections[0].value = cluster.get_notes_text();

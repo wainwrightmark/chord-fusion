@@ -94,6 +94,7 @@ fn main() {
             WINDOW_HEIGHT / 10.0,
         ))
         .add_plugin(WallsPlugin)
+        .add_plugin(NotesPlayingPlugin)
         .add_plugin(ChordTextPlugin)
         .add_plugin(ShapePlugin)
         .add_plugin(InputPlugin)
@@ -105,7 +106,7 @@ fn main() {
         .add_plugin(DeconstructPlugin)
         .add_plugin(ObjectivePlugin)
         .add_plugin(LevelPlugin)
-        .add_plugin(NotesPlayingPlugin)
+        
         .add_startup_system(setup.label("main_setup"))
         //.add_startup_system_to_stage(StartupStage::PostStartup, create_initial_orbs)
         .run();

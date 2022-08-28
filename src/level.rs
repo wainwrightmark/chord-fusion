@@ -12,7 +12,9 @@ pub struct LevelPlugin;
 impl Plugin for LevelPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<CurrentLevel>()
-            .add_system(check_for_completion.after("update_met_objectives"))
+        .add_system_to_stage(
+            CoreStage::PostUpdate,
+                check_for_completion.after("update_met_objectives"))
             .add_startup_system(setup_level_text)
             .add_startup_system_to_stage(StartupStage::PostStartup, start_next_level);
     }

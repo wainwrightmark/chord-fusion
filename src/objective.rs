@@ -3,6 +3,7 @@ use itertools::Itertools;
 use smallvec::ToSmallVec;
 
 use crate::cluster::*;
+use crate::chord::*;
 use crate::*;
 
 pub struct ObjectivePlugin;
@@ -15,7 +16,9 @@ impl Plugin for ObjectivePlugin {
                     .label("check_for_completions")
                     .after("drag_end"),
             )
-            .add_system(set_objective_colors.after("track_notes_playing_changes"))
+            .add_system_to_stage(
+                CoreStage::PostUpdate,
+                set_objective_colors.after("track_notes_playing_changes"))
             .add_system_to_stage(
                 CoreStage::PostUpdate,
                 update_met_objectives.label("update_met_objectives"),
@@ -25,7 +28,7 @@ impl Plugin for ObjectivePlugin {
 
 #[derive(Component)]
 pub struct Objective {
-    pub filter: Option<&'static str>, //The nice_name of the chord
+    pub filter: Option<Chord>,
     pub is_complete: bool,
 }
 

@@ -13,7 +13,8 @@ impl Plugin for SoundPlugin {
                 start_all_sounds.label("start_all_sounds"),
             )
             .init_resource::<NoteHandles>()
-            .add_system(
+            .add_system_to_stage(
+                CoreStage::PostUpdate,
                 set_sounds
                     .label("stop_sounds")
                     .after("track_notes_playing_changes"),
