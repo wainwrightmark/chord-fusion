@@ -69,9 +69,7 @@ fn change_chord_text(
     } else if !interacting_changed_objectives.is_empty() {
         //info!("ICO");
         if let Some(obj) = interacting_objectives
-            .iter()
-            .filter(|x| x.1.interacting)
-            .next()
+            .iter().find(|x| x.1.interacting)
         {
             if let Some(chord) = obj.0.filter {
                 Some((chord.nice_name().to_string(), "".to_string()))

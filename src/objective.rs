@@ -108,10 +108,8 @@ fn set_objective_colors(
                     if draw_mode.ne(&incomplete_excited_objective_draw_mode()) {
                         *draw_mode = incomplete_excited_objective_draw_mode();
                     }
-                } else {
-                    if draw_mode.ne(&incomplete_objective_draw_mode()) {
-                        *draw_mode = incomplete_objective_draw_mode();
-                    }
+                } else if draw_mode.ne(&incomplete_objective_draw_mode()) {
+                    *draw_mode = incomplete_objective_draw_mode();
                 }
             }
         }
@@ -164,11 +162,9 @@ fn update_met_objectives(
 ) {
     if removals.iter().next().is_some() {
         for (obj, mut objective, mut draw_mode) in objectives.iter_mut() {
-            if objective.is_complete {
-                if !complete_objectives.iter().any(|x| x.objective == obj) {
-                    objective.is_complete = false;
-                    *draw_mode = incomplete_objective_draw_mode();
-                }
+            if objective.is_complete && !complete_objectives.iter().any(|x| x.objective == obj) {
+                objective.is_complete = false;
+                *draw_mode = incomplete_objective_draw_mode();
             }
         }
     }

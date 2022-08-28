@@ -81,7 +81,7 @@ fn spawn_wall(
         ))
         .insert(RigidBody::Fixed)
         .insert(Transform::from_translation(point.extend(0.0)))
-        .insert(collider_shape.clone())
-        .insert(Name::new(name.to_string()))
+        .insert(collider_shape)
+        .insert(Name::new(name))
         .insert(Wall {});
 }

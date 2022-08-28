@@ -70,17 +70,15 @@ fn check_for_completion(
     current_level: ResMut<CurrentLevel>,
     level_text: Query<(Entity, &LevelText, &mut Text)>,
 ) {
-    if !added_completions.is_empty() {
-        if objectives.iter().all(|o| o.1.is_complete) {
-            for (e, _) in objectives.iter() {
-                commands.entity(e).despawn_recursive();
-            }
-            for (e, _) in orbs.iter() {
-                commands.entity(e).despawn_recursive();
-            }
-
-            start_next_level(commands, current_level, level_text)
+    if !added_completions.is_empty() && objectives.iter().all(|o| o.1.is_complete) {
+        for (e, _) in objectives.iter() {
+            commands.entity(e).despawn_recursive();
         }
+        for (e, _) in orbs.iter() {
+            commands.entity(e).despawn_recursive();
+        }
+
+        start_next_level(commands, current_level, level_text)
     }
 }
 
@@ -113,7 +111,7 @@ fn start_next_level(
     }
 
     for (i, objective) in level.objectives.iter().enumerate() {
-        create_objective(&mut commands, i, level.objectives.len(), objective.clone());
+        create_objective(&mut commands, i, level.objectives.len(), *objective);
     }
 
     for n in level.notes {
@@ -262,7 +260,7 @@ impl GameLevel {
                 header: "IX",
                 name: "Chromatic Tac Toe",
                 objectives: vec![None, None, None],
-                notes: (0..12).map(|x| Note(x)).collect_vec(),
+                notes: (0..12).map(Note).collect_vec(),
             },
 
             _ => Self::random_level(i),

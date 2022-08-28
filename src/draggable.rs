@@ -45,23 +45,21 @@ fn drag_end(
 
                 if all_contacts.len() > 1 {
                     ew_combine.send(CombineEvent(all_contacts));
-                } else {
-                    if let Some(point) = event.position {
-                        rapier_context.intersections_with_point(
-                            point,
-                            QueryFilter::exclude_collider(
-                                QueryFilter::exclude_solids(QueryFilter::default()),
-                                entity,
-                            ),
-                            |e| {
-                                ew_deconstruct.send(DragEndWithIntersection {
-                                    dragged: entity,
-                                    target: e,
-                                });
-                                false
-                            },
-                        );
-                    }
+                } else if let Some(point) = event.position {
+                    rapier_context.intersections_with_point(
+                        point,
+                        QueryFilter::exclude_collider(
+                            QueryFilter::exclude_solids(QueryFilter::default()),
+                            entity,
+                        ),
+                        |e| {
+                            ew_deconstruct.send(DragEndWithIntersection {
+                                dragged: entity,
+                                target: e,
+                            });
+                            false
+                        },
+                    );
                 }
 
                 commands
@@ -115,13 +113,11 @@ fn drag_move(
                 .collect_vec();
 
             for c_entity in all_contacts {
-                if c_entity != entity {
-                    if !remaining_undragged_actors.remove(&c_entity) {
-                        //this entity was not previously interacting
-                        if let Ok((_, mut interactable, _)) = interactables.get_mut(c_entity) {
-                            //info!("draggable interacting");
-                            interactable.interacting = true;
-                        }
+                if c_entity != entity && !remaining_undragged_actors.remove(&c_entity) {
+                    //this entity was not previously interacting
+                    if let Ok((_, mut interactable, _)) = interactables.get_mut(c_entity) {
+                        //info!("draggable interacting");
+                        interactable.interacting = true;
                     }
                 }
             }

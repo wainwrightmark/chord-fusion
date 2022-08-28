@@ -29,12 +29,10 @@ impl Cluster {
             } else {
                 DrawMode::Fill(FillMode::color(Color::NONE))
             }
+        } else if playing {
+            DrawMode::Fill(FillMode::color(CHORD_COLOR))
         } else {
-            if playing {
-                DrawMode::Fill(FillMode::color(CHORD_COLOR))
-            } else {
-                DrawMode::Stroke(StrokeMode::color(CHORD_COLOR))
-            }
+            DrawMode::Stroke(StrokeMode::color(CHORD_COLOR))
         }
     }
 
@@ -48,7 +46,7 @@ impl Cluster {
                 let chord_option = Chord::all().get(&a1);
 
                 if let Some(chord) = chord_option {
-                    return Some((self.notes[i], chord.clone()));
+                    return Some((self.notes[i], *chord));
                 }
             }
         } else if self.notes.len() == 4 {
@@ -60,12 +58,12 @@ impl Cluster {
                 let chord_option = Chord::all().get(&a1);
 
                 if let Some(chord) = chord_option {
-                    return Some((self.notes[i], chord.clone()));
+                    return Some((self.notes[i], *chord));
                 }
             }
         }
 
-        return None;
+        None
     }
 
     // pub fn get_chord_name(&self) -> Option<String> {
@@ -76,7 +74,7 @@ impl Cluster {
     // }
 
     fn permute<const L: usize>(notes: [u8; L], index: usize) -> [u8; L] {
-        let mut new_notes = notes.clone();
+        let mut new_notes = notes;
         new_notes.rotate_left(index);
         for i in 0..L {
             new_notes[i] = ((new_notes[i] + 12) - notes[index]) % 12;

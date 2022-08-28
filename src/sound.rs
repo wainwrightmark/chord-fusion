@@ -23,7 +23,7 @@ impl Plugin for SoundPlugin {
 }
 
 fn pad_sound(hz: f32) -> impl AudioUnit32 {
-    (triangle_hz(hz) + sine_hz(hz * 2.)) >> lowpole_hz(100.0) >> split::<U2>() * 0.2
+    (triangle_hz(hz) + sine_hz(hz * 2.)) >> lowpole_hz(100.0) >> (split::<U2>() * 0.2)
 }
 
 fn pad_sound_note(note: Note) -> impl AudioUnit32 {
@@ -125,7 +125,7 @@ fn start_all_sounds(
         audio_sinks
             .get_handle(audio.play_with_settings(dsp_assets.graph(&sound10), settings.clone())),
         audio_sinks
-            .get_handle(audio.play_with_settings(dsp_assets.graph(&sound11), settings.clone())),
+            .get_handle(audio.play_with_settings(dsp_assets.graph(&sound11), settings)),
     ];
 
     note_handles.handles = Some(handles);
