@@ -48,3 +48,8 @@ pub struct WinTimer {
 
 #[derive(Component)]
 pub struct Wall {}
+
+#[derive(Component)]
+pub enum Shelf {
+    Left,Middle,Right
+}

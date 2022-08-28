@@ -95,7 +95,7 @@ fn check_for_completions(
                             false
                         }
                     } else {
-                        true
+                        orb.cluster.get_chord().is_some()
                     };
 
                     if meets_filter {
